@@ -6,18 +6,19 @@
 [![Known Vulnerabilities][snyk-image]][snyk-url]
 [![npm download][download-image]][download-url]
 [![Node.js Version][node-version-image]][node-version-url]
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://makeapullrequest.com)
 
-[npm-image]: https://img.shields.io/npm/v/egg-bin.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/egg-bin
-[ci-image]: https://github.com/eggjs/egg-bin/actions/workflows/nodejs.yml/badge.svg
-[ci-url]: https://github.com/eggjs/egg-bin/actions/workflows/nodejs.yml
-[codecov-image]: https://codecov.io/gh/eggjs/egg-bin/branch/master/graph/badge.svg
-[codecov-url]: https://codecov.io/gh/eggjs/egg-bin
-[snyk-image]: https://snyk.io/test/npm/egg-bin/badge.svg?style=flat-square
-[snyk-url]: https://snyk.io/test/npm/egg-bin
-[download-image]: https://img.shields.io/npm/dm/egg-bin.svg?style=flat-square
-[download-url]: https://npmjs.org/package/egg-bin
-[node-version-image]: https://img.shields.io/node/v/egg-bin.svg?style=flat-square
+[npm-image]: https://img.shields.io/npm/v/@eggjs/bin.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/@eggjs/bin
+[ci-image]: https://github.com/eggjs/bin/actions/workflows/nodejs.yml/badge.svg
+[ci-url]: https://github.com/eggjs/bin/actions/workflows/nodejs.yml
+[codecov-image]: https://codecov.io/gh/eggjs/bin/branch/master/graph/badge.svg
+[codecov-url]: https://codecov.io/gh/eggjs/bin
+[snyk-image]: https://snyk.io/test/npm/@eggjs/bin/badge.svg?style=flat-square
+[snyk-url]: https://snyk.io/test/npm/@eggjs/bin
+[download-image]: https://img.shields.io/npm/dm/@eggjs/bin.svg?style=flat-square
+[download-url]: https://npmjs.org/package/@eggjs/bin
+[node-version-image]: https://img.shields.io/node/v/@eggjs/bin.svg?style=flat-square
 [node-version-url]: https://nodejs.org/en/download/
 
 egg developer tool, extends [@artus-cli/artus-cli].
@@ -217,7 +218,7 @@ See <https://artus-cli.github.io>
 
 ## Contributors
 
-[![Contributors](https://contrib.rocks/image?repo=eggjs/egg-bin)](https://github.com/eggjs/egg-bin/graphs/contributors)
+[![Contributors](https://contrib.rocks/image?repo=eggjs/bin)](https://github.com/eggjs/bin/graphs/contributors)
 
 Made with [contributors-img](https://contrib.rocks).
 

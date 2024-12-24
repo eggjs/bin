@@ -3,9 +3,9 @@ import {
   Inject, ApplicationLifecycle, LifecycleHook, LifecycleHookUnit,
   Program, CommandContext,
 } from '@artus-cli/artus-cli';
-import { addNodeOptionsToEnv } from '../utils';
+import { addNodeOptionsToEnv } from '../utils.js';
 
-const debug = debuglog('egg-bin:midddleware:inspect');
+const debug = debuglog('@eggjs/bin/middleware/inspect');
 
 @LifecycleHookUnit()
 export default class implements ApplicationLifecycle {

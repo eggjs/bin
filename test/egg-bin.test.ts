@@ -1,5 +1,5 @@
 import path from 'node:path';
-import coffee from './coffee';
+import coffee from './coffee.js';
 
 describe('test/egg-bin.test.ts', () => {
   const eggBin = path.join(__dirname, '../src/bin/cli.ts');

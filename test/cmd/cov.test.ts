@@ -2,7 +2,7 @@ import assert from 'node:assert';
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import assertFile from 'assert-file';
-import mm from 'mm';
+import { mock } from '@eggjs/mock';
 
 import coffee from '../coffee';
 
@@ -190,7 +190,7 @@ describe('test/cmd/cov.test.ts', () => {
 
     it('should support egg.revert', () => {
       if (version < 18 || version > 20) return;
-      mm(process.env, 'NODE_ENV', 'development');
+      mock(process.env, 'NODE_ENV', 'development');
       return coffee.fork(eggBin, [ 'cov' ], {
         cwd: path.join(__dirname, '../fixtures/egg-revert'),
       })

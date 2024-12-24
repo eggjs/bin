@@ -6,8 +6,9 @@ import {
   DefineCommand, Option,
 } from '@artus-cli/artus-cli';
 import globby from 'globby';
+import { importResolve } from '@eggjs/utils';
 import { getChangedFilesForRoots } from 'jest-changed-files';
-import { BaseCommand } from './base';
+import { BaseCommand } from './base.js';
 
 const debug = debuglog('egg-bin:test');
 
@@ -93,7 +94,7 @@ export class TestCommand extends BaseCommand {
       throw err;
     }
 
-    const mochaFile = process.env.MOCHA_FILE || require.resolve('mocha/bin/_mocha');
+    const mochaFile = process.env.MOCHA_FILE || importResolve('mocha/bin/_mocha');
     if (this.parallel) {
       this.ctx.env.ENABLE_MOCHA_PARALLEL = 'true';
       if (this.autoAgent) {
@@ -120,12 +121,12 @@ export class TestCommand extends BaseCommand {
     // collect require
     const requires = await this.formatRequires();
     try {
-      const eggMockRegister = require.resolve('egg-mock/register', { paths: [ this.base ] });
+      const eggMockRegister = importResolve('@eggjs/mock/register', { paths: [ this.base ] });
       requires.push(eggMockRegister);
-      debug('auto register egg-mock: %o', eggMockRegister);
+      debug('auto register @eggjs/mock/register: %o', eggMockRegister);
     } catch (err) {
-      // ignore egg-mock not exists
-      debug('auto register egg-mock fail, can not require egg-mock on %o, error: %s',
+      // ignore @eggjs/mock not exists
+      debug('auto register @eggjs/mock fail, can not require @eggjs/mock on %o, error: %s',
         this.base, (err as Error).message);
     }
 
@@ -134,11 +135,11 @@ export class TestCommand extends BaseCommand {
     let reporterOptions = '';
     if (!reporter && this.mochawesome) {
       // use https://github.com/node-modules/mochawesome/pull/1 instead
-      reporter = require.resolve('mochawesome-with-mocha');
+      reporter = importResolve('mochawesome-with-mocha');
       reporterOptions = 'reportDir=node_modules/.mochawesome-reports';
       if (this.parallel) {
         // https://github.com/adamgruber/mochawesome#parallel-mode
-        requires.push(require.resolve('mochawesome-with-mocha/register'));
+        requires.push(importResolve('mochawesome-with-mocha/register'));
       }
     }
 

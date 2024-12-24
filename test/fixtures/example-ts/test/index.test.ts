@@ -1,4 +1,4 @@
-import { app } from 'egg-mock/bootstrap';
+import { app } from '@eggjs/mock/bootstrap';
 
 describe('test/index.test.ts', () => {
   it('should work', async () => {

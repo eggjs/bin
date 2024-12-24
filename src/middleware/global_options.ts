@@ -5,10 +5,15 @@ import {
   Inject, ApplicationLifecycle, LifecycleHook, LifecycleHookUnit,
   Program, CommandContext,
 } from '@artus-cli/artus-cli';
+import { importResolve } from '@eggjs/utils';
 import { runScript } from 'runscript';
-import { addNodeOptionsToEnv, readPackageJSON, hasTsConfig } from '../utils';
+import {
+  addNodeOptionsToEnv,
+  getSourceDirname,
+  readPackageJSON, hasTsConfig, getSourceFilename,
+} from '../utils.js';
 
-const debug = debuglog('egg-bin:midddleware:global_options');
+const debug = debuglog('@eggjs/bin/middleware/global_options');
 
 @LifecycleHookUnit()
 export default class GlobalOptions implements ApplicationLifecycle {
@@ -83,21 +88,27 @@ export default class GlobalOptions implements ApplicationLifecycle {
         }
       }
 
+      const isESM = pkg.type === 'module';
       if (ctx.args.typescript) {
-        const findPaths = [ path.dirname(__dirname) ];
+        const findPaths = [ getSourceFilename('middleware') ];
         if (tscompiler) {
           // try app baseDir first on custom tscompiler
           findPaths.unshift(ctx.args.base);
         }
         ctx.args.tscompiler = tscompiler ?? 'ts-node/register';
-        const tsNodeRegister = require.resolve(ctx.args.tscompiler, {
+        const tsNodeRegister = importResolve(ctx.args.tscompiler, {
           paths: findPaths,
         });
         // should require tsNodeRegister on current process, let it can require *.ts files
         // e.g.: dev command will execute egg loader to find configs and plugins
-        require(tsNodeRegister);
+        // await importModule(tsNodeRegister);
         // let child process auto require ts-node too
-        addNodeOptionsToEnv(`--require ${tsNodeRegister}`, ctx.env);
+        if (isESM) {
+          addNodeOptionsToEnv(`--import ${tsNodeRegister}`, ctx.env);
+        } else {
+          addNodeOptionsToEnv(`--require ${tsNodeRegister}`, ctx.env);
+        }
+        // addNodeOptionsToEnv(`--require ${tsNodeRegister}`, ctx.env);
         // tell egg loader to load ts file
         // see https://github.com/eggjs/egg-core/blob/master/lib/loader/egg_loader.js#L443
         ctx.env.EGG_TYPESCRIPT = 'true';
@@ -107,13 +118,17 @@ export default class GlobalOptions implements ApplicationLifecycle {
         ctx.env.TS_NODE_FILES = process.env.TS_NODE_FILES ?? 'true';
         // keep same logic with egg-core, test cmd load files need it
         // see https://github.com/eggjs/egg-core/blob/master/lib/loader/egg_loader.js#L49
-        addNodeOptionsToEnv(`--require ${require.resolve('tsconfig-paths/register')}`, ctx.env);
+        // addNodeOptionsToEnv(`--require ${importResolve('tsconfig-paths/register', {
+        //   paths: [ getSourceDirname() ],
+        // })}`, ctx.env);
       }
-      if (pkg.type === 'module') {
+      if (isESM) {
         // use ts-node/esm loader on esm
-        let esmLoader = require.resolve('ts-node/esm');
+        let esmLoader = importResolve('ts-node/esm', {
+          paths: [ getSourceDirname() ],
+        });
         if (process.platform === 'win32') {
-          // ES Module loading with abolute path fails on windows
+          // ES Module loading with absolute path fails on windows
           // https://github.com/nodejs/node/issues/31710#issuecomment-583916239
           // https://nodejs.org/api/url.html#url_url_pathtofileurl_path
           esmLoader = pathToFileURL(esmLoader).href;
@@ -131,7 +146,7 @@ export default class GlobalOptions implements ApplicationLifecycle {
         }
       }
       if (ctx.args.declarations) {
-        const etsBin = require.resolve('egg-ts-helper/dist/bin');
+        const etsBin = importResolve('egg-ts-helper/dist/bin');
         debug('run ets first: %o', etsBin);
         await runScript(`node ${etsBin}`);
       }

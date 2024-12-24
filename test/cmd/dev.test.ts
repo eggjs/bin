@@ -1,7 +1,7 @@
 import path from 'node:path';
 import net from 'node:net';
 import detect from 'detect-port';
-import mm from 'mm';
+import { mm } from '@eggjs/mock';
 import coffee from '../coffee';
 
 const version = Number(process.version.substring(1, 3));

@@ -4,7 +4,7 @@ import {
   ArtusCliError,
 } from '@artus-cli/artus-cli';
 
-const debug = debuglog('egg-bin:midddleware:handle_error');
+const debug = debuglog('@eggjs/bin/middleware/handle_error');
 
 @LifecycleHookUnit()
 export default class implements ApplicationLifecycle {

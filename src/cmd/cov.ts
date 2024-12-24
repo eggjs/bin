@@ -1,7 +1,8 @@
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import { DefineCommand, Option } from '@artus-cli/artus-cli';
-import { TestCommand } from './test';
+import { importResolve } from '@eggjs/utils';
+import { TestCommand } from './test.js';
 
 @DefineCommand({
   command: 'cov [files...]',
@@ -18,7 +19,7 @@ export class CovCommand extends TestCommand {
   prerequire: boolean;
 
   @Option({
-    description: 'coverage ignore, one or more fileset patterns`',
+    description: 'coverage ignore, one or more files patterns`',
     array: true,
     default: [],
   })
@@ -77,7 +78,7 @@ export class CovCommand extends TestCommand {
       c8Args.push('-x');
       c8Args.push(exclude);
     }
-    const c8File = require.resolve('c8/bin/c8.js');
+    const c8File = importResolve('c8/bin/c8.js');
     const outputDir = path.join(this.base, 'node_modules/.c8_output');
     await fs.rm(outputDir, { force: true, recursive: true });
     const coverageDir = path.join(this.base, 'coverage');

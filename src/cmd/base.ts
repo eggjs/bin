@@ -8,14 +8,14 @@ import {
   Utils,
 } from '@artus-cli/artus-cli';
 
-const debug = debuglog('egg-bin:base');
+const debug = debuglog('@eggjs/bin/base');
 
 // only hook once and only when ever start any child.
-const childs = new Set<ChildProcess>();
+const children = new Set<ChildProcess>();
 let hadHook = false;
-function gracefull(proc: ChildProcess) {
+function graceful(proc: ChildProcess) {
   // save child ref
-  childs.add(proc);
+  children.add(proc);
 
   // only hook once
   /* c8 ignore else */
@@ -30,7 +30,7 @@ function gracefull(proc: ChildProcess) {
     });
 
     process.once('exit', (code: number) => {
-      for (const child of childs) {
+      for (const child of children) {
         debug('process exit code: %o, kill child %o with %o', code, child.pid, signal);
         child.kill(signal);
       }
@@ -110,14 +110,17 @@ export abstract class BaseCommand extends Command {
       execArgv: forkExecArgv,
     };
     const proc = fork(modulePath, args, options);
-    debug('Run fork pid: %o, `%s %s %s`',
-      proc.pid, process.execPath, modulePath, args.join(' '));
-    gracefull(proc);
+    debug('Run fork pid: %o\n\n$ %s%s %s %s\n\n',
+      proc.pid,
+      options.env?.NODE_OPTIONS ? `NODE_OPTIONS='${options.env.NODE_OPTIONS}' ` : '',
+      process.execPath,
+      modulePath, args.map(a => `'${a}'`).join(' '));
+    graceful(proc);
 
     return new Promise<void>((resolve, reject) => {
       proc.once('exit', code => {
         debug('fork pid: %o exit code %o', proc.pid, code);
-        childs.delete(proc);
+        children.delete(proc);
         if (code !== 0) {
           const err = new ForkError(modulePath + ' ' + args.join(' ') + ' exit with code ' + code, code);
           reject(err);

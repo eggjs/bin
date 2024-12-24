@@ -1,9 +1,9 @@
 import { debuglog } from 'node:util';
-import path from 'node:path';
 import { DefineCommand, Option } from '@artus-cli/artus-cli';
 import utils from '@eggjs/utils';
 import detect from 'detect-port';
-import { BaseCommand } from './base';
+import { BaseCommand } from './base.js';
+import { getSourceFilename } from '../utils.js';
 
 const debug = debuglog('egg-bin:dev');
 
@@ -42,7 +42,7 @@ export class DevCommand extends BaseCommand {
     debug('run dev: %o', this.ctx.args);
     this.ctx.env.NODE_ENV = this.ctx.env.NODE_ENV ?? 'development';
     this.ctx.env.EGG_MASTER_CLOSE_TIMEOUT = '1000';
-    const serverBin = path.join(__dirname, '../../scripts/start-cluster.js');
+    const serverBin = getSourceFilename('../scripts/start-cluster.mjs');
     const eggStartOptions = await this.formatEggStartOptions();
     const args = [ JSON.stringify(eggStartOptions) ];
     const requires = await this.formatRequires();
