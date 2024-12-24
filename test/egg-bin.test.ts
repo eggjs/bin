@@ -1,10 +1,10 @@
 import path from 'node:path';
 import coffee from './coffee.js';
+import { getRootDirname, getFixtures } from './helper.js';
 
 describe('test/egg-bin.test.ts', () => {
-  const eggBin = path.join(__dirname, '../src/bin/cli.ts');
-  const fixtures = path.join(__dirname, 'fixtures');
-  const cwd = path.join(fixtures, 'test-files');
+  const eggBin = path.join(getRootDirname(), 'dist/esm/bin/cli.js');
+  const cwd = getFixtures('test-files');
 
   describe('global options', () => {
     it('should show version', () => {

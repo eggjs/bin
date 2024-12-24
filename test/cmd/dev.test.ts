@@ -1,15 +1,15 @@
 import path from 'node:path';
-import net from 'node:net';
-import detect from 'detect-port';
+import net, { Server } from 'node:net';
+import { detect } from 'detect-port';
 import { mm } from '@eggjs/mock';
-import coffee from '../coffee';
+import coffee from '../coffee.js';
+import { getRootDirname, getFixtures } from '../helper.js';
 
 const version = Number(process.version.substring(1, 3));
 
 describe('test/cmd/dev.test.ts', () => {
-  const eggBin = path.join(__dirname, '../../src/bin/cli.ts');
-  const fixtures = path.join(__dirname, '../fixtures');
-  const cwd = path.join(fixtures, 'demo-app');
+  const eggBin = path.join(getRootDirname(), 'dist/esm/bin/cli.js');
+  const cwd = getFixtures('demo-app');
 
   it('should startCluster success', () => {
     return coffee.fork(eggBin, [ 'dev' ], {
@@ -37,7 +37,7 @@ describe('test/cmd/dev.test.ts', () => {
   });
 
   it('should dev start work with declarations = true', () => {
-    const cwd = path.join(fixtures, 'example-declarations');
+    const cwd = getFixtures('example-declarations');
     return coffee.fork(eggBin, [ 'dev' ], { cwd })
       .debug()
       .expect('stdout', /"workers":1/)
@@ -115,7 +115,7 @@ describe('test/cmd/dev.test.ts', () => {
   });
 
   it('should startCluster with custom yadan framework', () => {
-    const baseDir = path.join(fixtures, 'custom-framework-app');
+    const baseDir = getFixtures('custom-framework-app');
     return coffee.fork(eggBin, [ 'dev' ], { cwd: baseDir })
       // .debug()
       .expect('stdout', /yadan start:/)
@@ -135,7 +135,7 @@ describe('test/cmd/dev.test.ts', () => {
   });
 
   it('should support --require', () => {
-    const script = path.join(fixtures, 'require-script');
+    const script = getFixtures('require-script');
     return coffee.fork(eggBin, [ 'dev', '--require', script ], { cwd })
       // .debug()
       .expect('stdout', /hey, you require me by --require/)
@@ -145,7 +145,7 @@ describe('test/cmd/dev.test.ts', () => {
 
   it('should support egg.require', () => {
     return coffee.fork(eggBin, [ 'dev' ], {
-      cwd: path.join(fixtures, 'egg-require'),
+      cwd: getFixtures('egg-require'),
     })
       // .debug()
       .expect('stdout', /hey, you require me by --require/)
@@ -154,12 +154,12 @@ describe('test/cmd/dev.test.ts', () => {
   });
 
   describe('auto detect available port', () => {
-    let server;
-    let serverPort;
+    let server: Server;
+    let serverPort: number;
     before(async () => {
       serverPort = await detect(7001);
       server = net.createServer();
-      await new Promise(resolve => {
+      await new Promise<void>(resolve => {
         server.listen(serverPort, resolve);
       });
     });
@@ -169,7 +169,7 @@ describe('test/cmd/dev.test.ts', () => {
     it('should auto detect available port', done => {
       coffee.fork(eggBin, [ 'dev' ], {
         cwd,
-        env: { EGG_BIN_DEFAULT_PORT: serverPort },
+        env: { EGG_BIN_DEFAULT_PORT: String(serverPort) },
       })
         // .debug()
         .expect('stderr', /\[egg-bin] server port \d+ is in use, now using port \d+/)
@@ -179,7 +179,7 @@ describe('test/cmd/dev.test.ts', () => {
   });
 
   describe('obtain the port from config.*.js', () => {
-    const cwd = path.join(fixtures, 'example-port');
+    const cwd = getFixtures('example-port');
     it('should obtain the port from config.default.js', () => {
       coffee.fork(eggBin, [ 'dev' ], {
         cwd,
@@ -194,7 +194,7 @@ describe('test/cmd/dev.test.ts', () => {
     if (version < 18 || version > 20) return;
     mm(process.env, 'NODE_ENV', 'development');
     return coffee.fork(eggBin, [ 'dev' ], {
-      cwd: path.join(__dirname, '../fixtures/egg-revert'),
+      cwd: getFixtures('egg-revert'),
     })
       // .debug()
       .expect('stdout', /SECURITY WARNING: Reverting CVE-2023-46809: Marvin attack on PKCS#1 padding/)

@@ -3,15 +3,14 @@ import path from 'node:path';
 import fs from 'node:fs/promises';
 import assertFile from 'assert-file';
 import { mock } from '@eggjs/mock';
-
-import coffee from '../coffee';
+import coffee from '../coffee.js';
+import { getFixtures, getRootDirname } from '../helper.js';
 
 const version = Number(process.version.substring(1, 3));
 
 describe('test/cmd/cov.test.ts', () => {
-  const eggBin = path.join(__dirname, '../../src/bin/cli.ts');
-  const fixtures = path.join(__dirname, '../fixtures');
-  const cwd = path.join(fixtures, 'test-files');
+  const eggBin = path.join(getRootDirname(), 'dist/esm/bin/cli.js');
+  const cwd = getFixtures('test-files');
 
   async function assertCoverage(baseDir: string) {
     assertFile(path.join(baseDir, 'coverage/coverage-final.json'));
@@ -38,7 +37,7 @@ describe('test/cmd/cov.test.ts', () => {
     });
 
     it('should success on ts', async () => {
-      const cwd = path.join(fixtures, 'example-ts');
+      const cwd = getFixtures('example-ts');
       await coffee.fork(eggBin, [ 'cov' ], { cwd })
         // .debug()
         .expect('stdout', /should work/)
@@ -139,7 +138,7 @@ describe('test/cmd/cov.test.ts', () => {
     });
 
     it('should run cov when no test files', () => {
-      const cwd = path.join(fixtures, 'prerequire');
+      const cwd = getFixtures('prerequire');
       return coffee.fork(eggBin, [ 'cov', '--ts=false' ], { cwd, env: { TESTS: 'noexist.js' } })
         // .debug()
         .expect('code', 0)
@@ -147,7 +146,7 @@ describe('test/cmd/cov.test.ts', () => {
     });
 
     it('should set EGG_BIN_PREREQUIRE', async () => {
-      const cwd = path.join(fixtures, 'prerequire');
+      const cwd = getFixtures('prerequire');
       await coffee.fork(eggBin, [ 'cov', '--ts=false' ], { cwd, env: { TESTS: 'test/**/*.test.js' } })
         // .debug()
         .expect('stdout', /EGG_BIN_PREREQUIRE undefined/)
@@ -166,7 +165,7 @@ describe('test/cmd/cov.test.ts', () => {
     it('test parallel', () => {
       if (process.platform === 'win32') return;
       return coffee.fork(eggBin, [ 'cov', '--parallel', '--ts=false' ], {
-        cwd: path.join(fixtures, 'test-demo-app'),
+        cwd: getFixtures('test-demo-app'),
         env: { TESTS: 'test/**/*.test.js' },
       })
         // .debug()
@@ -177,7 +176,7 @@ describe('test/cmd/cov.test.ts', () => {
     });
 
     it('should run cov on ts-esm module', () => {
-      const cwd = path.join(fixtures, 'mocha-test-ts-esm');
+      const cwd = getFixtures('mocha-test-ts-esm');
       return coffee.fork(eggBin, [ 'cov' ], {
         cwd,
       })
@@ -192,7 +191,7 @@ describe('test/cmd/cov.test.ts', () => {
       if (version < 18 || version > 20) return;
       mock(process.env, 'NODE_ENV', 'development');
       return coffee.fork(eggBin, [ 'cov' ], {
-        cwd: path.join(__dirname, '../fixtures/egg-revert'),
+        cwd: getFixtures('egg-revert'),
       })
         .debug()
         .expect('stdout', /SECURITY WARNING: Reverting CVE-2023-46809: Marvin attack on PKCS#1 padding/)

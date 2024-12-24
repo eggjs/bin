@@ -27,7 +27,11 @@ function main() {
     exclude.push('dist');
   }
 
-  start({ exclude, baseDir });
+  start({
+    binName: 'egg-bin',
+    exclude,
+    baseDir,
+  });
 }
 
 main();

@@ -1,5 +1,5 @@
 import { DefineCommand } from '@artus-cli/artus-cli';
-import { DevCommand as BaseDevCommand } from '../../../../src/index.js';
+import { DevCommand as BaseDevCommand } from '../../../../';
 
 @DefineCommand({
   command: 'dev',

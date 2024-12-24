@@ -1,12 +1,12 @@
 import path from 'node:path';
-import coffee from '../coffee';
+import coffee from '../coffee.js';
+import { getFixtures, getRootDirname } from '../helper.js';
 
 const version = Number(process.version.substring(1, 3));
 
 describe('test/cmd/test.test.ts', () => {
-  const eggBin = path.join(__dirname, '../../src/bin/cli.ts');
-  const fixtures = path.join(__dirname, '../fixtures');
-  const cwd = path.join(fixtures, 'test-files');
+  const eggBin = path.join(getRootDirname(), 'dist/esm/bin/cli.js');
+  const cwd = getFixtures('test-files');
 
   describe('egg-bin test', () => {
     it('should success js', () => {
@@ -21,7 +21,7 @@ describe('test/cmd/test.test.ts', () => {
     });
 
     it('should success on ts', async () => {
-      const cwd = path.join(fixtures, 'example-ts');
+      const cwd = getFixtures('example-ts');
       await coffee.fork(eggBin, [ 'test' ], { cwd })
         // .debug()
         .expect('stdout', /should work/)
@@ -55,7 +55,7 @@ describe('test/cmd/test.test.ts', () => {
     });
 
     it('should ignore node_modules and fixtures', () => {
-      return coffee.fork(eggBin, [ 'test' ], { cwd: path.join(fixtures, 'test-files-glob') })
+      return coffee.fork(eggBin, [ 'test' ], { cwd: getFixtures('test-files-glob') })
       // .debug()
         .expect('stdout', /should test index/)
         .expect('stdout', /should test sub/)
@@ -145,7 +145,7 @@ describe('test/cmd/test.test.ts', () => {
     });
 
     it('should force exit', () => {
-      const cwd = path.join(fixtures, 'no-exit');
+      const cwd = getFixtures('no-exit');
       return coffee.fork(eggBin, [ 'test' ], { cwd })
         // .debug()
         .expect('code', 0)
@@ -153,7 +153,7 @@ describe('test/cmd/test.test.ts', () => {
     });
 
     it('run not test with dry-run option', () => {
-      const cwd = path.join(fixtures, 'mocha-test');
+      const cwd = getFixtures('mocha-test');
       return coffee.fork(eggBin, [ 'test', '--timeout=12345', '--dry-run' ], {
         cwd,
         env: {
@@ -171,7 +171,7 @@ describe('test/cmd/test.test.ts', () => {
     });
 
     it('should run test on ts-esm module', () => {
-      const cwd = path.join(fixtures, 'mocha-test-ts-esm');
+      const cwd = getFixtures('mocha-test-ts-esm');
       return coffee.fork(eggBin, [ 'test' ], {
         cwd,
       })
@@ -185,7 +185,7 @@ describe('test/cmd/test.test.ts', () => {
 
     it('should success js on unhandled-rejection', () => {
       if (version >= 20 && process.platform === 'win32') return;
-      return coffee.fork(eggBin, [ 'test' ], { cwd: path.join(fixtures, 'test-unhandled-rejection') })
+      return coffee.fork(eggBin, [ 'test' ], { cwd: getFixtures('test-unhandled-rejection') })
         .debug()
         .expect('stdout', / Uncaught Error: mock error/)
         .expect('code', 1)
@@ -195,7 +195,7 @@ describe('test/cmd/test.test.ts', () => {
     it('test parallel', () => {
       if (process.platform === 'win32') return;
       return coffee.fork(eggBin, [ 'test', '--parallel' ], {
-        cwd: path.join(fixtures, 'test-demo-app'),
+        cwd: getFixtures('test-demo-app'),
       })
         // .debug()
         .expect('stdout', /should work/)
@@ -206,9 +206,9 @@ describe('test/cmd/test.test.ts', () => {
 
     it('env.MOCHA_FILE should work', () => {
       return coffee.fork(eggBin, [ 'test', '--parallel' ], {
-        cwd: path.join(fixtures, 'test-demo-app'),
+        cwd: getFixtures('test-demo-app'),
         env: {
-          MOCHA_FILE: path.join(fixtures, 'bin/fake_mocha.js'),
+          MOCHA_FILE: getFixtures('bin/fake_mocha.js'),
         },
       })
         // .debug()
@@ -223,7 +223,7 @@ describe('test/cmd/test.test.ts', () => {
   describe('run test/.setup.js|ts first', () => {
     it('should auto require test/.setup.js', () => {
       return coffee.fork(eggBin, [ 'test', '--no-typescript' ], {
-        cwd: path.join(fixtures, 'setup-js'),
+        cwd: getFixtures('setup-js'),
         env: {
           TESTS: 'test/a.test.js',
         },
@@ -238,7 +238,7 @@ describe('test/cmd/test.test.ts', () => {
 
     it('should auto require test/.setup.ts', () => {
       return coffee.fork(eggBin, [ 'test', '--typescript' ], {
-        cwd: path.join(fixtures, 'setup-ts'),
+        cwd: getFixtures('setup-ts'),
         env: {
           TESTS: 'test/a.test.ts',
         },
@@ -311,7 +311,7 @@ describe('test/cmd/test.test.ts', () => {
     it('should support egg.revert', () => {
       if (version < 18 || version > 20) return;
       return coffee.fork(eggBin, [ 'test' ], {
-        cwd: path.join(__dirname, '../fixtures/egg-revert'),
+        cwd: getFixtures('egg-revert'),
       })
         .debug()
         .expect('stdout', /SECURITY WARNING: Reverting CVE-2023-46809: Marvin attack on PKCS#1 padding/)

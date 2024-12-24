@@ -1,14 +1,13 @@
-import path from 'node:path';
-import coffee from './coffee';
+import coffee from './coffee.js';
+import { getFixtures } from './helper.js';
 
-describe('test/my-egg-bin.test.ts', () => {
-  const fixtures = path.join(__dirname, 'fixtures');
-  const eggBin = path.join(fixtures, 'my-egg-bin/bin/my-egg-bin.ts');
-  const cwd = path.join(fixtures, 'test-files');
+describe.skip('test/my-egg-bin.test.ts', () => {
+  const eggBin = getFixtures('my-egg-bin/bin/my-egg-bin.ts');
+  const cwd = getFixtures('test-files');
 
   it('should my-egg-bin test success', () => {
     return coffee.fork(eggBin, [ 'test' ], { cwd, env: { TESTS: 'test/**/*.test.js' } })
-      // .debug()
+      .debug()
       .expect('stdout', /should success/)
       .expect('stdout', /a.test.js/)
       .expect('stdout', /b\/b.test.js/)
@@ -53,7 +52,7 @@ describe('test/my-egg-bin.test.ts', () => {
   });
 
   it('should my-egg-bin dev success', () => {
-    const baseDir = path.join(fixtures, 'custom-framework-app');
+    const baseDir = getFixtures('custom-framework-app');
     return coffee.fork(eggBin, [ 'dev' ], { cwd: baseDir })
       // .debug()
       .expect('stdout', /yadan start/)

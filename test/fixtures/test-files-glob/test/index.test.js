@@ -2,7 +2,7 @@
 
 const assert = require('assert');
 
-describe(__dirname, () => {
+describe('test', () => {
   it('should test index', () => {
     assert(true);
   });
