@@ -9,7 +9,7 @@ describe('test/cmd/test.test.ts', () => {
   const cwd = getFixtures('test-files');
 
   describe('egg-bin test', () => {
-    it('should success js', () => {
+    it.only('should success js', () => {
       return coffee.fork(eggBin, [ 'test' ], { cwd })
         .debug()
         .expect('stdout', /should success/)

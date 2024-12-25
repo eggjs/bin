@@ -12,7 +12,8 @@ export default {
     ];
     options.env = {
       // EGG_TYPESCRIPT: 'true',
-      NODE_DEBUG: process.env.NODE_DEBUG,
+      // NODE_DEBUG: process.env.NODE_DEBUG,
+      NODE_DEBUG: '@eggjs/*',
       PATH: process.env.PATH,
       ...options.env,
     };
