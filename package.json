@@ -37,6 +37,7 @@
     "@artus-cli/plugin-autocomplete": "^0.1.1",
     "@artus-cli/plugin-version": "^1.0.2",
     "@eggjs/utils": "^4.1.2",
+    "@oclif/core": "^4.2.0",
     "c8": "^10.0.0",
     "detect-port": "^2.0.0",
     "egg-ts-helper": "^2.1.0",
@@ -85,7 +86,7 @@
     "lint": "eslint --cache src test --ext .ts",
     "pretest": "npm run clean && npm run lint -- --fix && npm run prepublishOnly",
     "test": "npm run test-local",
-    "test-local": "cross-env NODE_DEBUG=* node dist/esm/bin/cli.js test",
+    "test-local": "cross-env NODE_DEBUG=* node bin/dev.js test",
     "preci": "npm run clean && npm run lint && npm run prepublishOnly",
     "cov": "c8 -r lcov -r text-summary -x 'test/**' npm run test-local -- --timeout 120000",
     "ci": "npm run cov",
@@ -114,14 +115,24 @@
     "./package.json": "./package.json"
   },
   "files": [
+    "bin",
     "dist",
     "src",
     "scripts"
   ],
   "bin": {
-    "egg-bin": "./dist/esm/bin/cli.js"
+    "egg-bin": "./bin/run.js"
   },
   "types": "./dist/commonjs/index.d.ts",
   "main": "./dist/commonjs/index.js",
-  "module": "./dist/esm/index.js"
+  "module": "./dist/esm/index.js",
+  "oclif": {
+    "bin": "egg-bin",
+    "commands": "./dist/esm/commands",
+    "dirname": "egg-bin",
+    "topicSeparator": " ",
+    "hooks": {
+      "init": "./dist/esm/hooks/init/options"
+    }
+  }
 }

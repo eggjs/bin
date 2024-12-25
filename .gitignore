@@ -29,9 +29,6 @@ yarn.lock
 .c8_output
 .idea
 
-bin/*.js
-cmd/*.js
-!bin/postinstall.js
 .eslintcache
 dist
 test/fixtures/example-declarations/typings/

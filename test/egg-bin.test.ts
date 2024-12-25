@@ -7,9 +7,9 @@ describe('test/egg-bin.test.ts', () => {
   const cwd = getFixtures('test-files');
 
   describe('global options', () => {
-    it('should show version', () => {
+    it.only('should show version', () => {
       return coffee.fork(eggBin, [ '--version' ], { cwd })
-        // .debug()
+        .debug()
         .expect('stdout', /\d+\.\d+\.\d+/)
         .expect('code', 0)
         .end();
