@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/bin",
-  "version": "7.0.0-beta.3",
+  "version": "7.0.0-beta.4",
   "publishConfig": {
     "access": "public"
   },
@@ -86,7 +86,7 @@
     "lint": "eslint --cache src test --ext .ts",
     "pretest": "npm run clean && npm run lint -- --fix && npm run prepublishOnly",
     "test": "npm run test-local",
-    "test-local": "cross-env NODE_DEBUG=* node bin/dev.js test",
+    "test-local": "node bin/dev.js test",
     "preci": "npm run clean && npm run lint && npm run prepublishOnly",
     "cov": "c8 -r lcov -r text-summary -x 'test/**' npm run test-local -- --timeout 120000",
     "ci": "npm run cov",
