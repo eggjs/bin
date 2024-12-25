@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/bin",
-  "version": "7.0.0-beta.0",
+  "version": "7.0.0-beta.2",
   "publishConfig": {
     "access": "public"
   },
@@ -80,7 +80,7 @@
     "typescript": "5"
   },
   "scripts": {
-    "postinstall": "node scripts/postinstall.mjs",
+    "postinstall-skip": "node scripts/postinstall.mjs",
     "lint": "eslint --cache src test --ext .ts",
     "pretest": "npm run clean && npm run lint -- --fix && npm run prepublishOnly",
     "test": "npm run test-local",

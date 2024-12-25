@@ -96,7 +96,7 @@ export default class GlobalOptions implements ApplicationLifecycle {
           findPaths.unshift(ctx.args.base);
         }
         ctx.args.tscompiler = tscompiler ?? 'ts-node/register';
-        const tsNodeRegister = importResolve(ctx.args.tscompiler, {
+        let tsNodeRegister = importResolve(ctx.args.tscompiler, {
           paths: findPaths,
         });
         // should require tsNodeRegister on current process, let it can require *.ts files
@@ -104,6 +104,7 @@ export default class GlobalOptions implements ApplicationLifecycle {
         // await importModule(tsNodeRegister);
         // let child process auto require ts-node too
         if (isESM) {
+          tsNodeRegister = pathToFileURL(tsNodeRegister).href;
           addNodeOptionsToEnv(`--import ${tsNodeRegister}`, ctx.env);
         } else {
           addNodeOptionsToEnv(`--require ${tsNodeRegister}`, ctx.env);
@@ -127,12 +128,11 @@ export default class GlobalOptions implements ApplicationLifecycle {
         let esmLoader = importResolve('ts-node/esm', {
           paths: [ getSourceDirname() ],
         });
-        if (process.platform === 'win32') {
-          // ES Module loading with absolute path fails on windows
-          // https://github.com/nodejs/node/issues/31710#issuecomment-583916239
-          // https://nodejs.org/api/url.html#url_url_pathtofileurl_path
-          esmLoader = pathToFileURL(esmLoader).href;
-        }
+        // ES Module loading with absolute path fails on windows
+        // https://github.com/nodejs/node/issues/31710#issuecomment-583916239
+        // https://nodejs.org/api/url.html#url_url_pathtofileurl_path
+        // Error [ERR_UNSUPPORTED_ESM_URL_SCHEME]: Only URLs with a scheme in: file, data, and node are supported by the default ESM loader. On Windows, absolute paths must be valid file:// URLs. Received protocol 'd:'
+        esmLoader = pathToFileURL(esmLoader).href;
         // wait for https://github.com/nodejs/node/issues/40940
         addNodeOptionsToEnv('--no-warnings', ctx.env);
         addNodeOptionsToEnv(`--loader ${esmLoader}`, ctx.env);
