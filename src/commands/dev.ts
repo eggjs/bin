@@ -32,14 +32,11 @@ export default class Dev<T extends typeof Dev> extends BaseCommand<T> {
     sticky: Flags.boolean({
       description: 'start a sticky cluster server',
     }),
-    env: Flags.string({
-      description: 'specify the NODE_ENV',
-    }),
   };
 
   public async run(): Promise<void> {
     debug('NODE_ENV: %o', this.env);
-    this.env.NODE_ENV = this.flags.env ?? this.env.NODE_ENV ?? 'development';
+    this.env.NODE_ENV = this.env.NODE_ENV ?? 'development';
     this.env.EGG_MASTER_CLOSE_TIMEOUT = '1000';
     const serverBin = getSourceFilename('../scripts/start-cluster.mjs');
     const eggStartOptions = await this.formatEggStartOptions();

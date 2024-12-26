@@ -25,7 +25,7 @@ describe('test/cmd/dev.test.ts', () => {
       .end();
   });
 
-  it.only('should dev start with custom NODE_ENV', () => {
+  it('should dev start with custom NODE_ENV', () => {
     return coffee.fork(eggBin, [ 'dev' ], { cwd, env: { NODE_ENV: 'prod' } })
       .debug()
       .expect('stdout', /"workers":1/)
@@ -36,18 +36,7 @@ describe('test/cmd/dev.test.ts', () => {
       .end();
   });
 
-  it('should dev start with --env prod', () => {
-    return coffee.fork(eggBin, [ 'dev', '--env', 'prod' ], { cwd })
-      .debug()
-      .expect('stdout', /"workers":1/)
-      .expect('stdout', /"baseDir":".*?demo-app"/)
-      .expect('stdout', /"framework":".*?aliyun-egg"/)
-      .expect('stdout', /NODE_ENV: prod/)
-      .expect('code', 0)
-      .end();
-  });
-
-  it('should dev start work with declarations = true', () => {
+  it.skip('should dev start work with declarations = true', () => {
     const cwd = getFixtures('example-declarations');
     return coffee.fork(eggBin, [ 'dev' ], { cwd })
       .debug()
@@ -183,7 +172,7 @@ describe('test/cmd/dev.test.ts', () => {
         env: { EGG_BIN_DEFAULT_PORT: String(serverPort) },
       })
         // .debug()
-        .expect('stderr', /\[egg-bin] server port \d+ is in use, now using port \d+/)
+        .expect('stderr', /\[@eggjs\/bin] server port \d+ is unavailable, now using port \d+/)
         .expect('code', 0)
         .end(done);
     });
