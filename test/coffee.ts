@@ -15,6 +15,7 @@ export default {
       PATH: process.env.PATH,
       ...options.env,
     };
+    // console.error('fork env: %o', options.env);
     return coffee.fork(modulePath, args, options);
   },
 };

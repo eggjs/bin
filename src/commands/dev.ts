@@ -1,30 +1,107 @@
-import { Args, Command, Flags } from '@oclif/core';
+import { debuglog } from 'node:util';
+import { Flags } from '@oclif/core';
+import { pathToFileURL } from 'node:url';
+import { getConfig, getFrameworkPath } from '@eggjs/utils';
+import { detect } from 'detect-port';
+import { getSourceFilename } from '../utils.js';
+import { BaseCommand } from '../baseCommand.js';
 
-export default class Dev extends Command {
-  static override args = {
-    file: Args.string({ description: 'file to read' }),
-  };
+const debug = debuglog('@eggjs/bin/commands/dev');
 
-  static override description = 'describe the command here';
+export default class Dev<T extends typeof Dev> extends BaseCommand<T> {
+  static override description = 'Start server at local dev mode';
 
   static override examples = [
     '<%= config.bin %> <%= command.id %>',
   ];
 
   static override flags = {
-    // flag with no value (-f, --force)
-    force: Flags.boolean({ char: 'f' }),
-    // flag with a value (-n, --name=VALUE)
-    name: Flags.string({ char: 'n', description: 'name to print' }),
+    port: Flags.integer({
+      description: 'listening port, default to 7001',
+      char: 'p',
+    }),
+    workers: Flags.integer({
+      char: 'c',
+      aliases: [ 'cluster' ],
+      description: 'numbers of app workers',
+      default: 1,
+    }),
+    framework: Flags.string({
+      description: 'specify framework that can be absolute path or npm package, default is "egg"',
+    }),
+    sticky: Flags.boolean({
+      description: 'start a sticky cluster server',
+    }),
+    env: Flags.string({
+      description: 'specify the NODE_ENV',
+    }),
   };
 
   public async run(): Promise<void> {
-    const { args, flags } = await this.parse(Dev);
-
-    const name = flags.name ?? 'world';
-    this.log(`hello ${name} from /Users/fengmk2/git/github.com/eggjs/bin/src/commands/dev.ts`);
-    if (args.file && flags.force) {
-      this.log(`you input --force and --file: ${args.file}`);
+    debug('NODE_ENV: %o', this.env);
+    this.env.NODE_ENV = this.flags.env ?? this.env.NODE_ENV ?? 'development';
+    this.env.EGG_MASTER_CLOSE_TIMEOUT = '1000';
+    const serverBin = getSourceFilename('../scripts/start-cluster.mjs');
+    const eggStartOptions = await this.formatEggStartOptions();
+    const args = [ JSON.stringify(eggStartOptions) ];
+    const requires = await this.formatRequires();
+    const execArgv: string[] = [];
+    for (const r of requires) {
+      if (this.isESM) {
+        execArgv.push('--import');
+        execArgv.push(pathToFileURL(r).href);
+      } else {
+        execArgv.push('--require');
+        execArgv.push(r);
+      }
     }
+    await this.forkNode(serverBin, args, { execArgv });
+  }
+
+  protected async formatEggStartOptions() {
+    const { flags } = this;
+    flags.framework = getFrameworkPath({
+      framework: flags.framework,
+      baseDir: flags.base,
+    });
+
+    if (!flags.port) {
+      let configuredPort: number | undefined;
+      try {
+        const configuration = await getConfig({
+          framework: flags.framework,
+          baseDir: flags.base,
+          env: 'local',
+        });
+        configuredPort = configuration?.cluster?.listen?.port;
+      } catch (err) {
+        /** skip when failing to read the configuration */
+        debug('getConfig error: %s, framework: %o, baseDir: %o, env: local',
+          err, flags.framework, flags.base);
+      }
+      if (configuredPort) {
+        flags.port = configuredPort;
+        debug(`use port ${flags.port} from configuration file`);
+      } else {
+        const defaultPort = parseInt(process.env.EGG_BIN_DEFAULT_PORT ?? '7001');
+        debug('detect available port');
+        flags.port = await detect(defaultPort);
+        if (flags.port !== defaultPort) {
+          console.warn('[@eggjs/bin] server port %o is unavailable, now using port %o',
+            defaultPort, flags.port);
+        }
+        debug(`use available port ${flags.port}`);
+      }
+    }
+
+    return {
+      baseDir: flags.base,
+      workers: flags.workers,
+      port: flags.port,
+      framework: flags.framework,
+      typescript: flags.typescript,
+      tscompiler: flags.tscompiler,
+      sticky: flags.sticky,
+    };
   }
 }

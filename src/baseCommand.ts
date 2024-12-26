@@ -1,5 +1,6 @@
 import { debuglog } from 'node:util';
 import { pathToFileURL } from 'node:url';
+import path from 'node:path';
 import { fork, ForkOptions, ChildProcess } from 'node:child_process';
 import { Command, Flags, Interfaces } from '@oclif/core';
 import { importResolve } from '@eggjs/utils';
@@ -9,7 +10,6 @@ import {
   getSourceDirname,
   readPackageJSON, hasTsConfig,
 } from './utils.js';
-import path from 'node:path';
 import { PackageEgg } from './types.js';
 
 const debug = debuglog('@eggjs/bin/baseCommand');
@@ -135,7 +135,7 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
 
   public async init(): Promise<void> {
     await super.init();
-    debug('raw args: %o', this.argv);
+    debug('[init] raw args: %o, NODE_ENV: %o', this.argv, this.env.NODE_ENV);
     const { args, flags } = await this.parse({
       flags: this.ctor.flags,
       baseFlags: (super.ctor as typeof BaseCommand).baseFlags,
@@ -295,7 +295,7 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
 
     debug('set NODE_OPTIONS: %o', this.env.NODE_OPTIONS);
     debug('after: args: %o, flags: %o', args, flags);
-    debug('enter real command');
+    debug('enter real command: %o', this.id);
   }
 
   protected async catch(err: Error & {exitCode?: number}): Promise<any> {

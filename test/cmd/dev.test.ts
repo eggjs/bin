@@ -8,7 +8,7 @@ import { getRootDirname, getFixtures } from '../helper.js';
 const version = Number(process.version.substring(1, 3));
 
 describe('test/cmd/dev.test.ts', () => {
-  const eggBin = path.join(getRootDirname(), 'bin/dev.js');
+  const eggBin = path.join(getRootDirname(), 'bin/run.js');
   const cwd = getFixtures('demo-app');
 
   it('should startCluster success', () => {
@@ -25,9 +25,20 @@ describe('test/cmd/dev.test.ts', () => {
       .end();
   });
 
-  it('should dev start with custom NODE_ENV', () => {
+  it.only('should dev start with custom NODE_ENV', () => {
     return coffee.fork(eggBin, [ 'dev' ], { cwd, env: { NODE_ENV: 'prod' } })
-      // .debug()
+      .debug()
+      .expect('stdout', /"workers":1/)
+      .expect('stdout', /"baseDir":".*?demo-app"/)
+      .expect('stdout', /"framework":".*?aliyun-egg"/)
+      .expect('stdout', /NODE_ENV: prod/)
+      .expect('code', 0)
+      .end();
+  });
+
+  it('should dev start with --env prod', () => {
+    return coffee.fork(eggBin, [ 'dev', '--env', 'prod' ], { cwd })
+      .debug()
       .expect('stdout', /"workers":1/)
       .expect('stdout', /"baseDir":".*?demo-app"/)
       .expect('stdout', /"framework":".*?aliyun-egg"/)

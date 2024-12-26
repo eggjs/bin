@@ -3,7 +3,7 @@ import coffee from './coffee.js';
 import { getRootDirname, getFixtures } from './helper.js';
 
 describe('test/egg-bin.test.ts', () => {
-  const eggBin = path.join(getRootDirname(), 'bin/dev.js');
+  const eggBin = path.join(getRootDirname(), 'bin/run.js');
   const cwd = getFixtures('test-files');
 
   describe('global options', () => {
