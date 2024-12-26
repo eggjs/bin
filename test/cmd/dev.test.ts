@@ -8,7 +8,7 @@ import { getRootDirname, getFixtures } from '../helper.js';
 const version = Number(process.version.substring(1, 3));
 
 describe('test/cmd/dev.test.ts', () => {
-  const eggBin = path.join(getRootDirname(), 'dist/esm/bin/cli.js');
+  const eggBin = path.join(getRootDirname(), 'bin/dev.js');
   const cwd = getFixtures('demo-app');
 
   it('should startCluster success', () => {

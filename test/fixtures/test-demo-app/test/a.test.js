@@ -2,6 +2,7 @@ const { app } = require('@eggjs/mock/bootstrap');
 
 describe('a.test.js', () => {
   it('should work', async () => {
+    await app.ready();
     await app.httpRequest()
       .get('/')
       .expect(200)

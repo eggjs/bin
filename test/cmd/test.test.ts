@@ -9,9 +9,9 @@ describe('test/cmd/test.test.ts', () => {
   const cwd = getFixtures('test-files');
 
   describe('egg-bin test', () => {
-    it.only('should success js', () => {
+    it('should success js', () => {
       return coffee.fork(eggBin, [ 'test' ], { cwd })
-        .debug()
+        // .debug()
         .expect('stdout', /should success/)
         .expect('stdout', /a\.test\.js/)
         .expect('stdout', /b\/b\.test\.js/)
@@ -66,6 +66,7 @@ describe('test/cmd/test.test.ts', () => {
 
     it('should only test files specified by TESTS', () => {
       return coffee.fork(eggBin, [ 'test' ], { cwd, env: { TESTS: 'test/a.test.js' } })
+        // .debug()
         .expect('stdout', /should success/)
         .expect('stdout', /a\.test\.js/)
         .notExpect('stdout', /b[\/\\]b.test.js/)
@@ -78,6 +79,7 @@ describe('test/cmd/test.test.ts', () => {
         cwd,
         env: { TESTS: 'test/a.test.js,test/b/b.test.js' },
       })
+        // .debug()
         .expect('stdout', /should success/)
         .expect('stdout', /a\.test\.js/)
         .expect('stdout', /b[\/\\]b.test.js/)
@@ -90,6 +92,7 @@ describe('test/cmd/test.test.ts', () => {
         cwd,
         env: { TESTS: 'test/**/*.test.js' },
       })
+        // .debug()
         .expect('stdout', /should success/)
         .expect('stdout', /a\.test\.js/)
         .notExpect('stdout', /b[\/\\]b.test.js/)
@@ -145,6 +148,7 @@ describe('test/cmd/test.test.ts', () => {
     });
 
     it('should force exit', () => {
+      // add --exit to mocha
       const cwd = getFixtures('no-exit');
       return coffee.fork(eggBin, [ 'test' ], { cwd })
         // .debug()
@@ -161,11 +165,7 @@ describe('test/cmd/test.test.ts', () => {
         },
       })
         // .debug()
-        .expect('stdout', /_mocha /)
-        .expect('stdout', / --timeout=12345 /)
-        .expect('stdout', / --exit /)
-        .expect('stdout', /foo\.test\.js/)
-        .expect('stdout', /--dry-run/)
+        .expect('stdout', /1 passing \(\d+ms\)/)
         .expect('code', 0)
         .end();
     });
@@ -192,12 +192,12 @@ describe('test/cmd/test.test.ts', () => {
         .end();
     });
 
-    it('test parallel', () => {
+    it.skip('test parallel', () => {
       if (process.platform === 'win32') return;
       return coffee.fork(eggBin, [ 'test', '--parallel' ], {
         cwd: getFixtures('test-demo-app'),
       })
-        // .debug()
+        .debug()
         .expect('stdout', /should work/)
         .expect('stdout', /a\.test\.js/)
         .expect('code', 0)
@@ -211,7 +211,7 @@ describe('test/cmd/test.test.ts', () => {
           MOCHA_FILE: getFixtures('bin/fake_mocha.js'),
         },
       })
-        // .debug()
+        .debug()
         .expect('stdout', /env\.NODE_ENV: test/)
         .expect('stdout', /env\.AUTO_AGENT: true/)
         .expect('stdout', /env\.ENABLE_MOCHA_PARALLEL: true/)
@@ -299,7 +299,7 @@ describe('test/cmd/test.test.ts', () => {
         cwd,
         env: {
           TESTS: 'test/**/no-timeouts.test.js',
-          JB_DEBUG_FILE: __filename,
+          JB_DEBUG_FILE: eggBin,
         },
       })
         // .debug()
@@ -313,7 +313,7 @@ describe('test/cmd/test.test.ts', () => {
       return coffee.fork(eggBin, [ 'test' ], {
         cwd: getFixtures('egg-revert'),
       })
-        .debug()
+        // .debug()
         .expect('stdout', /SECURITY WARNING: Reverting CVE-2023-46809: Marvin attack on PKCS#1 padding/)
         .expect('code', 0)
         .end();

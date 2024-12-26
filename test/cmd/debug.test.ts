@@ -3,7 +3,7 @@ import coffee from '../coffee.js';
 import { getFixtures, getRootDirname } from '../helper.js';
 
 describe('test/cmd/debug.test.ts', () => {
-  const eggBin = path.join(getRootDirname(), 'dist/esm/bin/cli.js');
+  const eggBin = path.join(getRootDirname(), 'bin/dev.js');
   const cwd = getFixtures('demo-app');
 
   it('should startCluster success', () => {

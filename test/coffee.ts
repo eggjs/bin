@@ -11,7 +11,6 @@ export default {
       ...(options.execArgv ?? []),
     ];
     options.env = {
-      EGG_TYPESCRIPT: 'true',
       NODE_DEBUG: process.env.NODE_DEBUG,
       PATH: process.env.PATH,
       ...options.env,

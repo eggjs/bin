@@ -92,7 +92,7 @@
     "ci": "npm run cov",
     "clean": "rimraf dist",
     "copyScripts": "rimraf dist/scripts && cpy scripts dist",
-    "prepublishOnly": "tshy && tshy-after && attw --pack && rimraf dist/commonjs && npm run copyScripts"
+    "prepublishOnly": "tshy && tshy-after && attw --pack && npm run copyScripts"
   },
   "type": "module",
   "tshy": {

@@ -1,5 +1,6 @@
 import { debuglog } from 'node:util';
 import path from 'node:path';
+import os from 'node:os';
 import fs from 'node:fs/promises';
 import { Args, Flags } from '@oclif/core';
 import globby from 'globby';
@@ -12,7 +13,6 @@ export default class Test extends BaseCommand<typeof Test> {
   static override args = {
     file: Args.string({
       description: 'file(s) to test',
-      default: 'test/**/*.test.ts',
     }),
   };
 
@@ -26,32 +26,42 @@ export default class Test extends BaseCommand<typeof Test> {
   ];
 
   static override flags = {
-    // flag with no value (--ts, --typescript)
-    typescript: Flags.boolean({
-      description: '[default: true] use TypeScript to run the test',
-      default: true,
-      aliases: [ 'ts' ],
-      allowNo: true,
-    }),
-    javascript: Flags.boolean({
-      description: 'use JavaScript to run the test',
-      default: false,
-      aliases: [ 'js' ],
-    }),
     bail: Flags.boolean({
       description: 'bbort ("bail") after first test failure',
       default: false,
       char: 'b',
     }),
-    // flag with a value (-n, --name=VALUE)
-    timeout: Flags.string({
+    timeout: Flags.integer({
       char: 't',
       description: 'set test-case timeout in milliseconds',
-      default: process.env.TEST_TIMEOUT ?? '60000',
+      default: parseInt(process.env.TEST_TIMEOUT ?? '60000'),
+    }),
+    'no-timeout': Flags.boolean({
+      description: 'disable timeout',
     }),
     grep: Flags.string({
       char: 'g',
       description: 'only run tests matching <pattern>',
+    }),
+    mochawesome: Flags.boolean({
+      description: '[default: true] enable mochawesome reporter',
+      default: true,
+      allowNo: true,
+    }),
+    parallel: Flags.boolean({
+      description: 'mocha parallel mode',
+      default: false,
+      char: 'p',
+    }),
+    jobs: Flags.integer({
+      char: 't',
+      description: 'number of jobs to run in parallel',
+      default: os.cpus().length - 1,
+    }),
+    'auto-agent': Flags.boolean({
+      description: '[default: true] auto bootstrap agent in mocha master process',
+      default: true,
+      allowNo: true,
     }),
   };
 
@@ -66,16 +76,20 @@ export default class Test extends BaseCommand<typeof Test> {
     }
 
     const mochaFile = process.env.MOCHA_FILE || importResolve('mocha/bin/_mocha');
-    // if (this.parallel) {
-    //   this.ctx.env.ENABLE_MOCHA_PARALLEL = 'true';
-    //   if (this.autoAgent) {
-    //     this.ctx.env.AUTO_AGENT = 'true';
-    //   }
-    // }
+    if (flags.parallel) {
+      this.env.ENABLE_MOCHA_PARALLEL = 'true';
+      if (flags['auto-agent']) {
+        this.env.AUTO_AGENT = 'true';
+      }
+    }
     // set NODE_ENV=test, let egg application load unittest logic
     // https://eggjs.org/basics/env#difference-from-node_env
-    // this.ctx.env.NODE_ENV = 'test';
-    debug('run test: %s %o', mochaFile, this.args);
+    this.env.NODE_ENV = 'test';
+
+    if (flags['no-timeout']) {
+      flags.timeout = 0;
+    }
+    debug('run test: %s %o flags: %o', mochaFile, this.args, flags);
 
     const mochaArgs = await this.formatMochaArgs();
     if (!mochaArgs) return;
@@ -103,17 +117,17 @@ export default class Test extends BaseCommand<typeof Test> {
     // }
 
     // handle mochawesome enable
-    // let reporter = this.ctx.env.TEST_REPORTER;
-    // let reporterOptions = '';
-    // if (!reporter && this.mochawesome) {
-    //   // use https://github.com/node-modules/mochawesome/pull/1 instead
-    //   reporter = importResolve('mochawesome-with-mocha');
-    //   reporterOptions = 'reportDir=node_modules/.mochawesome-reports';
-    //   if (this.parallel) {
-    //     // https://github.com/adamgruber/mochawesome#parallel-mode
-    //     requires.push(importResolve('mochawesome-with-mocha/register'));
-    //   }
-    // }
+    let reporter = this.env.TEST_REPORTER;
+    let reporterOptions = '';
+    if (!reporter && flags.mochawesome) {
+      // use https://github.com/node-modules/mochawesome/pull/1 instead
+      reporter = importResolve('mochawesome-with-mocha');
+      reporterOptions = 'reportDir=node_modules/.mochawesome-reports';
+      if (flags.parallel) {
+        // https://github.com/adamgruber/mochawesome#parallel-mode
+        requires.push(path.join(reporter, '../register.js'));
+      }
+    }
 
     const ext = flags.typescript ? 'ts' : 'js';
     let pattern = args.file ? args.file.split(',') : [];
@@ -158,16 +172,16 @@ export default class Test extends BaseCommand<typeof Test> {
     const grep = flags.grep ? flags.grep.split(',') : [];
 
     return [
-      flags.dryRun ? '--dry-run' : '',
+      flags['dry-run'] ? '--dry-run' : '',
       // force exit
       '--exit',
       flags.bail ? '--bail' : '',
       grep.map(pattern => `--grep='${pattern}'`).join(' '),
       flags.timeout ? `--timeout=${flags.timeout}` : '--no-timeout',
-      // this.parallel ? '--parallel' : '',
-      // this.parallel && this.jobs ? `--jobs=${this.jobs}` : '',
-      // reporter ? `--reporter=${reporter}` : '',
-      // reporterOptions ? `--reporter-options=${reporterOptions}` : '',
+      flags.parallel ? '--parallel' : '',
+      flags.parallel && flags.jobs ? `--jobs=${flags.jobs}` : '',
+      reporter ? `--reporter=${reporter}` : '',
+      reporterOptions ? `--reporter-options=${reporterOptions}` : '',
       ...requires.map(r => `--require=${r}`),
       ...files,
     ].filter(a => a.trim());
