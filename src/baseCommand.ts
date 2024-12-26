@@ -6,7 +6,6 @@ import { Command, Flags, Interfaces } from '@oclif/core';
 import { importResolve } from '@eggjs/utils';
 import { runScript } from 'runscript';
 import {
-  addNodeOptionsToEnv,
   getSourceDirname,
   readPackageJSON, hasTsConfig,
 } from './utils.js';
@@ -218,9 +217,9 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
       // let child process auto require ts-node too
       if (this.isESM) {
         tsNodeRegister = pathToFileURL(tsNodeRegister).href;
-        addNodeOptionsToEnv(`--import ${tsNodeRegister}`, this.env);
+        this.addNodeOptions(`--import ${tsNodeRegister}`);
       } else {
-        addNodeOptionsToEnv(`--require ${tsNodeRegister}`, this.env);
+        this.addNodeOptions(`--require ${tsNodeRegister}`);
       }
       // tell egg loader to load ts file
       // see https://github.com/eggjs/egg-core/blob/master/lib/loader/egg_loader.js#L443
@@ -246,8 +245,8 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
       // Error [ERR_UNSUPPORTED_ESM_URL_SCHEME]: Only URLs with a scheme in: file, data, and node are supported by the default ESM loader. On Windows, absolute paths must be valid file:// URLs. Received protocol 'd:'
       esmLoader = pathToFileURL(esmLoader).href;
       // wait for https://github.com/nodejs/node/issues/40940
-      addNodeOptionsToEnv('--no-warnings', this.env);
-      addNodeOptionsToEnv(`--loader ${esmLoader}`, this.env);
+      this.addNodeOptions('--no-warnings');
+      this.addNodeOptions(`--loader ${esmLoader}`);
     }
 
     if (flags.declarations === undefined) {
@@ -277,11 +276,11 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
 
     let hasInspectOption = false;
     if (flags.inspect) {
-      addNodeOptionsToEnv('--inspect', this.env);
+      this.addNodeOptions('--inspect');
       hasInspectOption = true;
     }
     if (flags['inspect-brk']) {
-      addNodeOptionsToEnv('--inspect-brk', this.env);
+      this.addNodeOptions('--inspect-brk');
       hasInspectOption = true;
     }
     if (hasInspectOption) {
@@ -320,6 +319,16 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
       requires.push(eggRequire);
     }
     return requires;
+  }
+
+  protected addNodeOptions(options: string) {
+    if (this.env.NODE_OPTIONS) {
+      if (!this.env.NODE_OPTIONS.includes(options)) {
+        this.env.NODE_OPTIONS = `${this.env.NODE_OPTIONS} ${options}`;
+      }
+    } else {
+      this.env.NODE_OPTIONS = options;
+    }
   }
 
   protected async forkNode(modulePath: string, forkArgs: string[], options: ForkNodeOptions = {}) {

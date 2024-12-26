@@ -17,7 +17,7 @@ async function cpy(src: string, target: string) {
 }
 
 describe('test/ts.test.ts', () => {
-  const eggBin = path.join(getRootDirname(), 'src/bin/cli.ts');
+  const eggBin = path.join(getRootDirname(), 'bin/run.js');
   let cwd: string;
 
   it('should support ts', () => {

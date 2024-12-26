@@ -5,6 +5,7 @@ import fs from 'node:fs/promises';
 import { Args, Flags } from '@oclif/core';
 import globby from 'globby';
 import { importResolve } from '@eggjs/utils';
+import { getChangedFilesForRoots } from 'jest-changed-files';
 import { BaseCommand } from '../baseCommand.js';
 
 const debug = debuglog('@eggjs/bin/commands/test');
@@ -42,6 +43,10 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
     grep: Flags.string({
       char: 'g',
       description: 'only run tests matching <pattern>',
+    }),
+    changed: Flags.boolean({
+      description: 'only test with changed files and match test/**/*.test.(js|ts)',
+      char: 'c',
     }),
     mochawesome: Flags.boolean({
       description: '[default: true] enable mochawesome reporter',
@@ -135,15 +140,15 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
 
     const ext = flags.typescript ? 'ts' : 'js';
     let pattern = args.file ? args.file.split(',') : [];
-    // // changed
-    // if (this.changed) {
-    //   pattern = await this.getChangedTestFiles(this.base, ext);
-    //   if (!pattern.length) {
-    //     console.log('No changed test files');
-    //     return;
-    //   }
-    //   debug('changed files: %o', pattern);
-    // }
+    // changed
+    if (flags.changed) {
+      pattern = await this.getChangedTestFiles(flags.base, ext);
+      if (!pattern.length) {
+        console.log('No changed test files');
+        return;
+      }
+      debug('changed files: %o', pattern);
+    }
 
     if (!pattern.length && process.env.TESTS) {
       pattern = process.env.TESTS.split(',');
@@ -189,5 +194,23 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
       ...files,
       flags['dry-run'] ? '--dry-run' : '',
     ].filter(a => a.trim());
+  }
+
+  protected async getChangedTestFiles(dir: string, ext: string) {
+    const res = await getChangedFilesForRoots([ path.join(dir, 'test') ], {});
+    const changedFiles = res.changedFiles;
+    const files: string[] = [];
+    for (let cf of changedFiles) {
+      // only find test/**/*.test.(js|ts)
+      if (cf.endsWith(`.test.${ext}`)) {
+        // Patterns MUST use forward slashes (not backslashes)
+        // This should be converted on Windows
+        if (process.platform === 'win32') {
+          cf = cf.replace(/\\/g, '/');
+        }
+        files.push(cf);
+      }
+    }
+    return files;
   }
 }

@@ -14,21 +14,6 @@
   },
   "homepage": "https://github.com/eggjs/bin",
   "author": "fengmk2 <fengmk2@gmail.com> (https://github.com/fengmk2)",
-  "scripts2": {
-    "postinstall": "node scripts/postinstall.js",
-    "lint": "eslint . --cache --ext ts",
-    "test": "npm run lint -- --fix && npm run test-local",
-    "test-local": "npm run tsc && node dist/bin/cli.js test",
-    "test-local-with-ts-node-transpile-only": "node -r ts-node/register/transpile-only src/bin/cli.ts test",
-    "test-local-with-swc": "node -r @swc-node/register src/bin/cli.ts test",
-    "test-local-with-esbuild": "node -r esbuild-register src/bin/cli.ts test",
-    "test-tsc": "npm run clean && npm run tsc && node dist/bin/cli.js && node dist/bin/cli.js test --base test/fixtures/example-ts && node dist/bin/cli.js dev --base test/fixtures/example-ts",
-    "cov": "c8 -r lcov -r text-summary -x 'test/**' npm run test-local -- --timeout 120000",
-    "ci": "npm run lint && npm run test-local && npm run test-tsc",
-    "prepublishOnly": "npm run clean && npm run tsc",
-    "tsc": "tsc",
-    "clean": "rm -rf dist"
-  },
   "engines": {
     "node": ">= 18.19.0"
   },
@@ -131,9 +116,6 @@
     "commands": "./dist/esm/commands",
     "dirname": "egg-bin",
     "topicSeparator": " ",
-    "hooks": {
-      "init": "./dist/esm/hooks/init/options"
-    },
     "additionalHelpFlags": [
       "-h"
     ]

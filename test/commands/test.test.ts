@@ -4,7 +4,7 @@ import { getFixtures, getRootDirname } from '../helper.js';
 
 const version = Number(process.version.substring(1, 3));
 
-describe('test/cmd/test.test.ts', () => {
+describe('test/commands/test.test.ts', () => {
   const eggBin = path.join(getRootDirname(), 'bin/run.js');
   const cwd = getFixtures('test-files');
 
