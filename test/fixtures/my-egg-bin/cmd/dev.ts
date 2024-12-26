@@ -1,13 +1,14 @@
-import { DefineCommand } from '@artus-cli/artus-cli';
-import { DevCommand as BaseDevCommand } from '../../../../';
+import { Dev } from '../../../../dist/esm/index.js';
 
-@DefineCommand({
-  command: 'dev',
-  description: 'Run the development server with my-egg-bin',
-})
-export class DevCommand extends BaseDevCommand {
-  async run() {
+export default class MyDev<T extends typeof MyDev> extends Dev<T> {
+  static override description = 'Run the development server with my-egg-bin';
+
+  static override examples = [
+    '<%= config.bin %> <%= command.id %>',
+  ];
+
+  public async run(): Promise<void> {
     super.run();
-    console.info('this is my-egg-bin dev, baseDir: %s', this.base);
+    console.info('this is my-egg-bin dev, baseDir: %s', this.flags.base);
   }
 }

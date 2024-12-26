@@ -197,8 +197,8 @@ describe('test/ts.test.ts', () => {
         .end();
     });
 
-    it('should fail start app with --no-ts', () => {
-      return coffee.fork(eggBin, [ 'dev', '--no-ts' ], { cwd })
+    it('should fail start app with --no-typescript', () => {
+      return coffee.fork(eggBin, [ 'dev', '--no-typescript' ], { cwd })
         // .debug()
         .expect('stdout', /agent.options.typescript = false/)
         .expect('stdout', /started/)
@@ -229,9 +229,9 @@ describe('test/ts.test.ts', () => {
       await fs.rm(path.join(cwd, 'node_modules'), { force: true, recursive: true });
       if (process.env.CI) {
         // don't use npmmirror.com on CI
-        await runScript('npx npminstall', { cwd });
+        await runScript('npminstall', { cwd });
       } else {
-        await runScript('npx npminstall -c', { cwd });
+        await runScript('npminstall -c', { cwd });
       }
 
       // copy egg to node_modules
@@ -243,11 +243,12 @@ describe('test/ts.test.ts', () => {
       const { stderr, code } = await coffee.fork(eggBin, [ 'dev', '--tsc', 'ts-node/register' ], {
         cwd,
         env: {
-          NODE_DEBUG: 'egg-bin*',
+          NODE_DEBUG: '@eggjs/bin*',
         },
       })
         // .debug()
         .end();
+      // @EGGJS/BIN/BASECOMMAND 15959: set NODE_OPTIONS: '--require /Users/fengmk2/git/github.com/eggjs/bin/node_modules/.store/ts-node@10.9.2/node_modules/ts-node/register/index.js'
       assert.match(stderr, /ts-node@10\.\d+\.\d+/);
       assert.equal(code, 0);
     });
@@ -260,9 +261,9 @@ describe('test/ts.test.ts', () => {
       await fs.rm(path.join(cwd, 'node_modules'), { force: true, recursive: true });
       if (process.env.CI) {
         // don't use npmmirror.com on CI
-        await runScript('npx npminstall ts-node@10.9.2 --no-save', { cwd });
+        await runScript('npminstall ts-node@10.9.2 --no-save', { cwd });
       } else {
-        await runScript('npx npminstall -c ts-node@10.9.2 --no-save', { cwd });
+        await runScript('npminstall -c ts-node@10.9.2 --no-save', { cwd });
       }
 
       // copy egg to node_modules
@@ -272,11 +273,11 @@ describe('test/ts.test.ts', () => {
       );
 
       const { stderr, code } = await coffee.fork(eggBin, [
-        'dev', '--ts', '--tscompiler=ts-node/register',
+        'dev', '--tscompiler=ts-node/register',
       ], {
         cwd,
         env: {
-          NODE_DEBUG: 'egg-bin*',
+          NODE_DEBUG: '@eggjs/bin*',
         },
       })
         // .debug()
@@ -388,10 +389,10 @@ describe('test/ts.test.ts', () => {
       // install custom ts-node
       await fs.rm(path.join(cwd, 'node_modules'), { force: true, recursive: true });
       if (process.env.CI) {
-        // dont use npmmirror.com on CI
-        await runScript('npx npminstall', { cwd });
+        // don't use npmmirror.com on CI
+        await runScript('npminstall', { cwd });
       } else {
-        await runScript('npx npminstall -c', { cwd });
+        await runScript('npminstall -c', { cwd });
       }
 
       // copy egg to node_modules
@@ -403,7 +404,7 @@ describe('test/ts.test.ts', () => {
       const { stdout, code } = await coffee.fork(eggBin, [ 'test', '--tsc', 'ts-node/register' ], {
         cwd,
         env: {
-          NODE_DEBUG: 'egg-bin*',
+          NODE_DEBUG: '@eggjs/bin*',
         },
       })
         // .debug()

@@ -61,6 +61,7 @@
     "esbuild-register": "^3.4.2",
     "eslint": "8",
     "eslint-config-egg": "14",
+    "npminstall": "^7.12.0",
     "rimraf": "6",
     "tshy": "3",
     "tshy-after": "1",

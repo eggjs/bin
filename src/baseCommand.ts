@@ -53,8 +53,8 @@ export interface ForkNodeOptions extends ForkOptions {
   dryRun?: boolean;
 }
 
-export type Flags<T extends typeof Command> = Interfaces.InferredFlags<typeof BaseCommand['baseFlags'] & T['flags']>;
-export type Args<T extends typeof Command> = Interfaces.InferredArgs<T['args']>;
+type Flags<T extends typeof Command> = Interfaces.InferredFlags<typeof BaseCommand['baseFlags'] & T['flags']>;
+type Args<T extends typeof Command> = Interfaces.InferredArgs<T['args']>;
 
 export abstract class BaseCommand<T extends typeof Command> extends Command {
   // add the --json flag
@@ -89,12 +89,12 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
     tscompiler: Flags.string({
       helpGroup: 'GLOBAL',
       summary: 'TypeScript compiler, like ts-node/register',
+      aliases: [ 'tsc' ],
     }),
     // flag with no value (--typescript)
     typescript: Flags.boolean({
       helpGroup: 'GLOBAL',
       description: '[default: true] use TypeScript to run the test',
-      aliases: [ 'ts' ],
       allowNo: true,
     }),
     ts: Flags.string({
@@ -160,7 +160,7 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
     this.pkgEgg = pkg.egg ?? {};
     flags.tscompiler = flags.tscompiler ?? this.env.TS_COMPILER ?? this.pkgEgg.tscompiler;
 
-    let typescript: boolean = args.typescript;
+    let typescript: boolean = flags.typescript;
     // keep compatible with old ts flag: `--ts=true` or `--ts=false`
     if (flags.ts === 'true') {
       typescript = true;

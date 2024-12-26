@@ -2,7 +2,16 @@
   "name": "my-egg-bin",
   "version": "2.3.4",
   "bin": {
-    "my-egg-bin": "bin/my-egg-bin.js"
+    "my-egg-bin": "bin/run.js"
   },
-  "type": "module"
+  "type": "module",
+  "oclif": {
+    "bin": "my-egg-bin",
+    "commands": "./cmd",
+    "dirname": "my-egg-bin",
+    "topicSeparator": " ",
+    "additionalHelpFlags": [
+      "-h"
+    ]
+  }
 }
