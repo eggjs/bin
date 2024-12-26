@@ -133,6 +133,9 @@
     "topicSeparator": " ",
     "hooks": {
       "init": "./dist/esm/hooks/init/options"
-    }
+    },
+    "additionalHelpFlags": [
+      "-h"
+    ]
   }
 }

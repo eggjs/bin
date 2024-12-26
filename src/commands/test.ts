@@ -9,7 +9,7 @@ import { BaseCommand } from '../baseCommand.js';
 
 const debug = debuglog('@eggjs/bin/commands/test');
 
-export default class Test extends BaseCommand<typeof Test> {
+export default class Test<T extends typeof Test> extends BaseCommand<T> {
   static override args = {
     file: Args.string({
       description: 'file(s) to test',
@@ -93,6 +93,10 @@ export default class Test extends BaseCommand<typeof Test> {
 
     const mochaArgs = await this.formatMochaArgs();
     if (!mochaArgs) return;
+    await this.runMocha(mochaFile, mochaArgs);
+  }
+
+  protected async runMocha(mochaFile: string, mochaArgs: string[]) {
     await this.forkNode(mochaFile, mochaArgs, {
       execArgv: [
         ...process.execArgv,
@@ -156,7 +160,7 @@ export default class Test extends BaseCommand<typeof Test> {
     files.sort();
 
     if (files.length === 0) {
-      console.log(`No test files found with ${pattern}`);
+      console.log('No test files found with pattern %o', pattern);
       return;
     }
 
@@ -172,7 +176,6 @@ export default class Test extends BaseCommand<typeof Test> {
     const grep = flags.grep ? flags.grep.split(',') : [];
 
     return [
-      flags['dry-run'] ? '--dry-run' : '',
       // force exit
       '--exit',
       flags.bail ? '--bail' : '',
@@ -184,6 +187,7 @@ export default class Test extends BaseCommand<typeof Test> {
       reporterOptions ? `--reporter-options=${reporterOptions}` : '',
       ...requires.map(r => `--require=${r}`),
       ...files,
+      flags['dry-run'] ? '--dry-run' : '',
     ].filter(a => a.trim());
   }
 }

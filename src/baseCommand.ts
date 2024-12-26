@@ -1,5 +1,4 @@
 import { debuglog } from 'node:util';
-// import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { fork, ForkOptions, ChildProcess } from 'node:child_process';
 import { Command, Flags, Interfaces } from '@oclif/core';
@@ -92,12 +91,17 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
       helpGroup: 'GLOBAL',
       summary: 'TypeScript compiler, like ts-node/register',
     }),
-    // flag with no value (--ts, --typescript)
+    // flag with no value (--typescript)
     typescript: Flags.boolean({
       helpGroup: 'GLOBAL',
       description: '[default: true] use TypeScript to run the test',
       aliases: [ 'ts' ],
       allowNo: true,
+    }),
+    ts: Flags.string({
+      helpGroup: 'GLOBAL',
+      description: 'shortcut for --typescript, e.g.: --ts=false',
+      options: [ 'true', 'false' ],
     }),
     javascript: Flags.boolean({
       helpGroup: 'GLOBAL',
@@ -131,6 +135,7 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
 
   public async init(): Promise<void> {
     await super.init();
+    debug('raw args: %o', this.argv);
     const { args, flags } = await this.parse({
       flags: this.ctor.flags,
       baseFlags: (super.ctor as typeof BaseCommand).baseFlags,
@@ -155,7 +160,15 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
     this.pkg = pkg;
     this.pkgEgg = pkg.egg ?? {};
     flags.tscompiler = flags.tscompiler ?? this.env.TS_COMPILER ?? this.pkgEgg.tscompiler;
-    let typescript = args.typescript;
+
+    let typescript: boolean = args.typescript;
+    // keep compatible with old ts flag: `--ts=true` or `--ts=false`
+    if (flags.ts === 'true') {
+      typescript = true;
+    } else if (flags.ts === 'false') {
+      typescript = false;
+    }
+
     if (typescript === undefined) {
       // try to ready EGG_TYPESCRIPT env first, only accept 'true' or 'false' string
       if (this.env.EGG_TYPESCRIPT === 'false') {
@@ -336,7 +349,7 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
       proc.pid,
       NODE_OPTIONS,
       process.execPath,
-      modulePath, forkArgs.map(a => `${a}`).join(' '));
+      modulePath, forkArgs.map(a => `'${a}'`).join(' '));
     graceful(proc);
 
     return new Promise<void>((resolve, reject) => {

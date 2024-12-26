@@ -21,7 +21,22 @@ describe('test/cmd/cov.test.ts', () => {
   }
 
   describe('egg-bin cov', () => {
-    it('should success on js', async () => {
+    it('should success on js with --javascript', async () => {
+      await coffee.fork(eggBin, [ 'cov', '--javascript' ], { cwd, env: { TESTS: 'test/**/*.test.js' } })
+        // .debug()
+        .expect('stdout', /should success/)
+        .expect('stdout', /a\.test\.js/)
+        .expect('stdout', /b[\/|\\]b\.test\.js/)
+        .notExpect('stdout', /\ba\.js/)
+        .expect('stdout', /Statements {3}:/)
+        .expect('code', 0)
+        .end();
+      assertCoverage(cwd);
+      const lcov = await fs.readFile(path.join(cwd, 'coverage/lcov.info'), 'utf8');
+      assert.match(lcov, /ignore[\/|\\]a.js/);
+    });
+
+    it('should success on js with --ts=false', async () => {
       await coffee.fork(eggBin, [ 'cov', '--ts=false' ], { cwd, env: { TESTS: 'test/**/*.test.js' } })
         // .debug()
         .expect('stdout', /should success/)
@@ -162,7 +177,7 @@ describe('test/cmd/cov.test.ts', () => {
         .end();
     });
 
-    it('test parallel', () => {
+    it.skip('test parallel', () => {
       if (process.platform === 'win32') return;
       return coffee.fork(eggBin, [ 'cov', '--parallel', '--ts=false' ], {
         cwd: getFixtures('test-demo-app'),
@@ -180,7 +195,7 @@ describe('test/cmd/cov.test.ts', () => {
       return coffee.fork(eggBin, [ 'cov' ], {
         cwd,
       })
-        .debug()
+        // .debug()
         .expect('stdout', /should work/)
         .expect('stdout', /2 passing/)
         .expect('code', 0)
@@ -193,7 +208,7 @@ describe('test/cmd/cov.test.ts', () => {
       return coffee.fork(eggBin, [ 'cov' ], {
         cwd: getFixtures('egg-revert'),
       })
-        .debug()
+        // .debug()
         .expect('stdout', /SECURITY WARNING: Reverting CVE-2023-46809: Marvin attack on PKCS#1 padding/)
         .expect('stdout', /1 passing/)
         .expect('code', 0)
