@@ -1,9 +1,10 @@
-node_modules/
+node_modules
 coverage/
 test/fixtures/custom-framework-app/node_modules/
 
 test/fixtures/demo-app/node_modules/aliyun-egg/
 !test/fixtures/demo-app/node_modules/aliyun-egg/node_modules/
+!test/fixtures/demo-app-esm/node_modules/
 
 test/fixtures/ts/node_modules/aliyun-egg/
 !test/fixtures/ts/node_modules/aliyun-egg/node_modules/

@@ -21,6 +21,7 @@
     "@eggjs/utils": "^4.1.2",
     "@oclif/core": "^4.2.0",
     "@types/mocha": "^10.0.10",
+    "@types/supertest": "^6.0.2",
     "c8": "^10.0.0",
     "detect-port": "^2.0.0",
     "egg-ts-helper": "^2.1.0",

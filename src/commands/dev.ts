@@ -1,6 +1,5 @@
 import { debuglog } from 'node:util';
 import { Flags } from '@oclif/core';
-import { pathToFileURL } from 'node:url';
 import { getConfig, getFrameworkPath } from '@eggjs/utils';
 import { detect } from 'detect-port';
 import { getSourceFilename } from '../utils.js';
@@ -44,13 +43,8 @@ export default class Dev<T extends typeof Dev> extends BaseCommand<T> {
     const requires = await this.formatRequires();
     const execArgv: string[] = [];
     for (const r of requires) {
-      if (this.isESM) {
-        execArgv.push('--import');
-        execArgv.push(pathToFileURL(r).href);
-      } else {
-        execArgv.push('--require');
-        execArgv.push(r);
-      }
+      const imports = this.formatImportModule(r).split(' ');
+      execArgv.push(...imports);
     }
     await this.forkNode(serverBin, args, { execArgv });
   }

@@ -207,7 +207,7 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
         findPaths.unshift(flags.base);
       }
       flags.tscompiler = flags.tscompiler ?? 'ts-node/register';
-      let tsNodeRegister = importResolve(flags.tscompiler, {
+      const tsNodeRegister = importResolve(flags.tscompiler, {
         paths: findPaths,
       });
       flags.tscompiler = tsNodeRegister;
@@ -215,12 +215,7 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
       // e.g.: dev command will execute egg loader to find configs and plugins
       // await importModule(tsNodeRegister);
       // let child process auto require ts-node too
-      if (this.isESM) {
-        tsNodeRegister = pathToFileURL(tsNodeRegister).href;
-        this.addNodeOptions(`--import ${tsNodeRegister}`);
-      } else {
-        this.addNodeOptions(`--require ${tsNodeRegister}`);
-      }
+      this.addNodeOptions(this.formatImportModule(tsNodeRegister));
       // tell egg loader to load ts file
       // see https://github.com/eggjs/egg-core/blob/master/lib/loader/egg_loader.js#L443
       this.env.EGG_TYPESCRIPT = 'true';
@@ -319,6 +314,13 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
       requires.push(eggRequire);
     }
     return requires;
+  }
+
+  protected formatImportModule(modulePath: string) {
+    if (this.isESM) {
+      return `--import ${pathToFileURL(modulePath).href}`;
+    }
+    return `--require ${modulePath}`;
   }
 
   protected addNodeOptions(options: string) {

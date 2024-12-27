@@ -11,12 +11,28 @@ describe('test/commands/test.test.ts', () => {
   describe('egg-bin test', () => {
     it('should success js', () => {
       return coffee.fork(eggBin, [ 'test' ], { cwd })
-        // .debug()
+        .debug()
         .expect('stdout', /should success/)
         .expect('stdout', /a\.test\.js/)
         .expect('stdout', /b\/b\.test\.js/)
         .notExpect('stdout', /\ba\.js/)
         .expect('code', 0)
+        .end();
+    });
+
+    it('should success when no changed files', () => {
+      return coffee.fork(eggBin, [ 'test', '-c' ], { cwd })
+        // .debug()
+        .expect('stdout', /No changed test files/)
+        .expect('code', 0)
+        .end();
+    });
+
+    it('should fail when baseDir not exists', () => {
+      return coffee.fork(eggBin, [ 'test', '--base', path.join(cwd, 'not-exists') ], { cwd })
+        // .debug()
+        .expect('stderr', /baseDir: .+ not exists/)
+        .expect('code', 1)
         .end();
     });
 

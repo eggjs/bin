@@ -11,7 +11,7 @@ describe('test/commands/dev.test.ts', () => {
   const eggBin = path.join(getRootDirname(), 'bin/run.js');
   const cwd = getFixtures('demo-app');
 
-  it('should startCluster success', () => {
+  it('should startCluster success on CommonJS', () => {
     return coffee.fork(eggBin, [ 'dev' ], {
       cwd,
       // env: { NODE_DEBUG: 'egg-bin*' },
@@ -19,6 +19,23 @@ describe('test/commands/dev.test.ts', () => {
       // .debug()
       .expect('stdout', /"workers":1/)
       .expect('stdout', /"baseDir":".*?demo-app"/)
+      .expect('stdout', /"framework":".*?aliyun-egg"/)
+      .expect('stdout', /NODE_ENV: development/)
+      .expect('code', 0)
+      .end();
+  });
+
+  it('should startCluster success on ESM', () => {
+    const cwd = getFixtures('demo-app-esm');
+    const hook = path.join(cwd, 'hook.js');
+    return coffee.fork(eggBin, [ 'dev', '-r', hook ], {
+      cwd,
+    })
+      // .debug()
+      .expect('stdout', /start hook success/)
+      .expect('stdout', /'--import'/)
+      .expect('stdout', /"workers":1/)
+      .expect('stdout', /"baseDir":".*?demo-app-esm"/)
       .expect('stdout', /"framework":".*?aliyun-egg"/)
       .expect('stdout', /NODE_ENV: development/)
       .expect('code', 0)
@@ -137,7 +154,7 @@ describe('test/commands/dev.test.ts', () => {
   it('should support --require', () => {
     const script = getFixtures('require-script');
     return coffee.fork(eggBin, [ 'dev', '--require', script ], { cwd })
-      // .debug()
+      .debug()
       .expect('stdout', /hey, you require me by --require/)
       .expect('code', 0)
       .end();
@@ -147,7 +164,7 @@ describe('test/commands/dev.test.ts', () => {
     return coffee.fork(eggBin, [ 'dev' ], {
       cwd: getFixtures('egg-require'),
     })
-      // .debug()
+      .debug()
       .expect('stdout', /hey, you require me by --require/)
       .expect('code', 0)
       .end();
