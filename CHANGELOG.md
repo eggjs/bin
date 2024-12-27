@@ -1,5 +1,53 @@
 # Changelog
 
+## [7.0.0](https://github.com/eggjs/bin/compare/v6.13.0...v7.0.0) (2024-12-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* drop Node.js < 18.19.0 support
+
+part of https://github.com/eggjs/egg/issues/3644
+
+https://github.com/eggjs/egg/issues/5257
+
+use https://oclif.io
+
+<!-- This is an auto-generated comment: release notes by coderabbit.ai
+-->
+## Summary by CodeRabbit
+
+- **New Features**
+	- Removed pull request template for contributors.
+	- Introduced a new workflow for automating commit publishing.
+	- Added scripts for executing Node.js applications in development mode.
+	- Updated the README to reflect the new package name and other details.
+	- Enhanced command classes for testing and development functionalities.
+	- Added new utility functions for better path handling in tests.
+	- Introduced new interface for package configuration.
+	- Added support for TypeScript with updated configurations.
+	- Implemented a new logging mechanism in hooks for better debugging.
+- Introduced a new class for managing server readiness in demo
+applications.
+
+- **Bug Fixes**
+- Adjusted import paths in tests for compatibility with new module
+structure.
+
+- **Documentation**
+- Updated README and various documentation links to reflect changes in
+package structure.
+
+- **Chores**
+- Updated package configurations, including versioning and dependencies.
+	- Removed obsolete files and configurations from the project.
+	- Enhanced test suite structure and clarity.
+<!-- end of auto-generated comment: release notes by coderabbit.ai -->
+
+### Features
+
+* support cjs and esm both by tshy ([#279](https://github.com/eggjs/bin/issues/279)) ([7078748](https://github.com/eggjs/bin/commit/7078748da943e07b4dcc5b213d7dcd417d2d6eee))
+
 ## [6.13.0](https://github.com/eggjs/egg-bin/compare/v6.12.0...v6.13.0) (2024-12-11)
 
 
