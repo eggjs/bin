@@ -5,4 +5,5 @@ export interface PackageEgg {
   declarations?: boolean;
   revert?: string | string[];
   require?: string | string[];
+  import?: string | string[];
 }

@@ -407,7 +407,7 @@ describe('test/ts.test.ts', () => {
           NODE_DEBUG: '@eggjs/bin*',
         },
       })
-        // .debug()
+        .debug()
         .end();
       assert.match(stdout, /ts-node@10\.\d+\.\d+/);
       assert.equal(code, 0);

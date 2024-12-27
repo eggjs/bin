@@ -80,6 +80,11 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
       char: 'r',
       multiple: true,
     }),
+    import: Flags.string({
+      helpGroup: 'GLOBAL',
+      summary: 'import the given module, only work on ESM',
+      multiple: true,
+    }),
     base: Flags.string({
       helpGroup: 'GLOBAL',
       summary: 'directory of application',
@@ -154,7 +159,6 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
     if (!path.isAbsolute(flags.base)) {
       flags.base = path.join(process.cwd(), flags.base);
     }
-    debug('baseDir: %o', flags.base);
     const pkg = await readPackageJSON(flags.base);
     this.pkg = pkg;
     this.pkgEgg = pkg.egg ?? {};
@@ -287,6 +291,7 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
       debug('set timeout = false when process.env.JB_DEBUG_FILE=%o', this.env.JB_DEBUG_FILE);
     }
 
+    debug('baseDir: %o, isESM: %o', flags.base, this.isESM);
     debug('set NODE_OPTIONS: %o', this.env.NODE_OPTIONS);
     debug('after: args: %o, flags: %o', args, flags);
     debug('enter real command: %o', this.id);
@@ -305,15 +310,21 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
 
   protected async formatRequires(): Promise<string[]> {
     const requires = this.flags.require ?? [];
-    const eggRequire = this.pkgEgg.require;
-    if (Array.isArray(eggRequire)) {
-      for (const r of eggRequire) {
-        requires.push(r);
-      }
-    } else if (typeof eggRequire === 'string' && eggRequire) {
-      requires.push(eggRequire);
+    const imports = this.flags.import ?? [];
+    let eggRequires = this.pkgEgg.require as string[] ?? [];
+    if (typeof eggRequires === 'string') {
+      eggRequires = [ eggRequires ];
     }
-    return requires;
+    let eggImports = this.pkgEgg.import as string[] ?? [];
+    if (typeof eggImports === 'string') {
+      eggImports = [ eggImports ];
+    }
+    return [
+      ...requires,
+      ...imports,
+      ...eggRequires,
+      ...eggImports,
+    ];
   }
 
   protected formatImportModule(modulePath: string) {
@@ -338,15 +349,18 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
       ...this.env,
       ...options.env,
     };
-    const NODE_OPTIONS = env.NODE_OPTIONS ? `NODE_OPTIONS='${env.NODE_OPTIONS}' ` : '';
-    if (options.dryRun) {
-      console.log('dry run: $ %o', `${NODE_OPTIONS}${process.execPath} ${modulePath} ${forkArgs.join(' ')}`);
-      return;
-    }
     const forkExecArgv = [
       ...this.globalExecArgv,
       ...options.execArgv || [],
     ];
+    const NODE_OPTIONS = env.NODE_OPTIONS ? `NODE_OPTIONS='${env.NODE_OPTIONS}' ` : '';
+    const forkExecArgvString = forkExecArgv.length ? ' ' + forkExecArgv.join(' ') + ' ' : ' ';
+    const forkArgsString = forkArgs.map(a => `'${a}'`).join(' ');
+    const fullCommand = `${NODE_OPTIONS}${process.execPath}${forkExecArgvString}${modulePath} ${forkArgsString}`;
+    if (options.dryRun) {
+      console.log('dry run: $ %s', fullCommand);
+      return;
+    }
 
     options = {
       stdio: 'inherit',
@@ -356,11 +370,9 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
       execArgv: forkExecArgv,
     };
     const proc = fork(modulePath, forkArgs, options);
-    debug('Run fork pid: %o\n\n$ %s%s %s %s\n\n',
+    debug('Run fork pid: %o\n\n$ %s\n\n',
       proc.pid,
-      NODE_OPTIONS,
-      process.execPath,
-      modulePath, forkArgs.map(a => `'${a}'`).join(' '));
+      fullCommand);
     graceful(proc);
 
     return new Promise<void>((resolve, reject) => {

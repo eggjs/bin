@@ -37,7 +37,8 @@ export default class Dev<T extends typeof Dev> extends BaseCommand<T> {
     debug('NODE_ENV: %o', this.env);
     this.env.NODE_ENV = this.env.NODE_ENV ?? 'development';
     this.env.EGG_MASTER_CLOSE_TIMEOUT = '1000';
-    const serverBin = getSourceFilename('../scripts/start-cluster.mjs');
+    const ext = this.isESM ? 'mjs' : 'cjs';
+    const serverBin = getSourceFilename(`../scripts/start-cluster.${ext}`);
     const eggStartOptions = await this.formatEggStartOptions();
     const args = [ JSON.stringify(eggStartOptions) ];
     const requires = await this.formatRequires();

@@ -152,10 +152,20 @@ describe('test/commands/dev.test.ts', () => {
   });
 
   it('should support --require', () => {
-    const script = getFixtures('require-script');
+    const script = getFixtures('require-script.cjs');
     return coffee.fork(eggBin, [ 'dev', '--require', script ], { cwd })
       .debug()
       .expect('stdout', /hey, you require me by --require/)
+      .expect('code', 0)
+      .end();
+  });
+
+  it('should support --import', () => {
+    const cwd = getFixtures('demo-app-esm');
+    const script = getFixtures('require-script.mjs');
+    return coffee.fork(eggBin, [ 'dev', '--import', script ], { cwd })
+      .debug()
+      .expect('stdout', /hey, you require me by --import/)
       .expect('code', 0)
       .end();
   });
