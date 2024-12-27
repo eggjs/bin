@@ -45,7 +45,7 @@ describe('test/ts.test.ts', () => {
 
     it('should start app', () => {
       return coffee.fork(eggBin, [ 'dev' ], { cwd })
-        // .debug()
+        .debug()
         .expect('stdout', /hi, egg, 12345/)
         .expect('stdout', /ts env: true/)
         .expect('stdout', /started/)
