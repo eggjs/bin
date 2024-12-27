@@ -1,13 +1,13 @@
 import path from 'node:path';
-import coffee from '../coffee';
+import coffee from '../coffee.js';
+import { getFixtures, getRootDirname } from '../helper.js';
 
-describe('test/cmd/debug.test.ts', () => {
-  const eggBin = path.join(__dirname, '../../src/bin/cli.ts');
-  const fixtures = path.join(__dirname, '../fixtures');
-  const cwd = path.join(fixtures, 'demo-app');
+describe('test/commands/debug.test.ts', () => {
+  const eggBin = path.join(getRootDirname(), 'bin/run.js');
+  const cwd = getFixtures('demo-app');
 
   it('should startCluster success', () => {
-    return coffee.fork(eggBin, [ 'debug' ], { cwd })
+    return coffee.fork(eggBin, [ 'dev', '--inspect' ], { cwd })
       // .debug()
       .expect('stdout', /"workers":1/)
       .expect('stdout', /"baseDir":".*?demo-app"/)

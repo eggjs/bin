@@ -3,7 +3,7 @@
   "egg": {
     "framework": "aliyun-egg",
     "require": [
-      "../require-script"
+      "../require-script.cjs"
     ]
   }
 }

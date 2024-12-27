@@ -1,4 +1,4 @@
-import mm, { MockOption } from 'egg-mock';
+import mm, { MockOption } from '@eggjs/mock';
 import request from 'supertest';
 
 describe('test/index.test.ts', () => {
@@ -6,7 +6,7 @@ describe('test/index.test.ts', () => {
   before(() => {
     app = mm.cluster({
       opt: {
-        execArgv: [ '--require', require.resolve('ts-node/register') ],
+        execArgv: [ '--require', 'ts-node/register' ],
       },
     } as MockOption);
     // app.debug();

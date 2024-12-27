@@ -6,28 +6,29 @@
 [![Known Vulnerabilities][snyk-image]][snyk-url]
 [![npm download][download-image]][download-url]
 [![Node.js Version][node-version-image]][node-version-url]
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://makeapullrequest.com)
 
-[npm-image]: https://img.shields.io/npm/v/egg-bin.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/egg-bin
-[ci-image]: https://github.com/eggjs/egg-bin/actions/workflows/nodejs.yml/badge.svg
-[ci-url]: https://github.com/eggjs/egg-bin/actions/workflows/nodejs.yml
-[codecov-image]: https://codecov.io/gh/eggjs/egg-bin/branch/master/graph/badge.svg
-[codecov-url]: https://codecov.io/gh/eggjs/egg-bin
-[snyk-image]: https://snyk.io/test/npm/egg-bin/badge.svg?style=flat-square
-[snyk-url]: https://snyk.io/test/npm/egg-bin
-[download-image]: https://img.shields.io/npm/dm/egg-bin.svg?style=flat-square
-[download-url]: https://npmjs.org/package/egg-bin
-[node-version-image]: https://img.shields.io/node/v/egg-bin.svg?style=flat-square
+[npm-image]: https://img.shields.io/npm/v/@eggjs/bin.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/@eggjs/bin
+[ci-image]: https://github.com/eggjs/bin/actions/workflows/nodejs.yml/badge.svg
+[ci-url]: https://github.com/eggjs/bin/actions/workflows/nodejs.yml
+[codecov-image]: https://codecov.io/gh/eggjs/bin/branch/master/graph/badge.svg
+[codecov-url]: https://codecov.io/gh/eggjs/bin
+[snyk-image]: https://snyk.io/test/npm/@eggjs/bin/badge.svg?style=flat-square
+[snyk-url]: https://snyk.io/test/npm/@eggjs/bin
+[download-image]: https://img.shields.io/npm/dm/@eggjs/bin.svg?style=flat-square
+[download-url]: https://npmjs.org/package/@eggjs/bin
+[node-version-image]: https://img.shields.io/node/v/@eggjs/bin.svg?style=flat-square
 [node-version-url]: https://nodejs.org/en/download/
 
-egg developer tool, extends [@artus-cli/artus-cli].
+egg developer tool, base on [oclif](https://oclif.io/).
 
 ---
 
 ## Install
 
 ```bash
-npm i egg-bin --save-dev
+npm i @eggjs/bin --save-dev
 ```
 
 ## Usage
@@ -77,7 +78,7 @@ egg-bin dev
 #### dev options
 
 - `--framework` egg web framework root path.
-- `--port` server port. If not specified, the port is obtained in the following order: [_egg.js_ configuration](https://www.eggjs.org/basics/config) `config/config.*.js` > `process.env.EGG_BIN_DEFAULT_PORT` > 7001 > other available ports.
+- `--port` server port. If not specified, the port is obtained in the following order: [_egg.js_ configuration](https://eggjs.org/basics/config) `config/config.*.js` > `process.env.EGG_BIN_DEFAULT_PORT` > 7001 > other available ports.
 - `--workers` worker process number, default to `1` worker at local mode.
 - `--sticky` start a sticky cluster server, default to `false`.
 
@@ -102,8 +103,6 @@ Create `.vscode/launch.json` file:
       ],
       "console": "integratedTerminal",
       "restart": true,
-      "protocol": "auto",
-      "port": 9229,
       "autoAttachChildProcesses": true
     },
     {
@@ -117,8 +116,6 @@ Create `.vscode/launch.json` file:
         "--",
         "--inspect-brk"
       ],
-      "protocol": "auto",
-      "port": 9229,
       "autoAttachChildProcesses": true
     }
   ]
@@ -191,7 +188,7 @@ You can pass any mocha argv.
 
 - `-x` add dir ignore coverage, support multiple argv
 - `--prerequire` prerequire files for coverage instrument, you can use this options if load files slowly when call `mm.app` or `mm.cluster`
-- `--typescript` / `--ts` enable typescript support. If true, will auto add `.ts` extension and ignore `typings` and `d.ts`.
+- `--typescript` enable typescript support. If `true`, will auto add `.ts` extension and ignore `typings` and `d.ts`.
 - `--c8` c8 instruments passthrough. you can use this to overwrite egg-bin's default c8 instruments and add additional ones.
   >
   > - egg-bin have some default instruments passed to c8 like `-r` and `--temp-directory`
@@ -209,7 +206,7 @@ COV_EXCLUDES="app/plugins/c*,app/autocreate/**" egg-bin cov
 
 ## Custom egg-bin for your team
 
-See <https://artus-cli.github.io>
+See <https://oclif.io/docs/configuring_your_cli/>
 
 ## License
 
@@ -217,10 +214,9 @@ See <https://artus-cli.github.io>
 
 ## Contributors
 
-[![Contributors](https://contrib.rocks/image?repo=eggjs/egg-bin)](https://github.com/eggjs/egg-bin/graphs/contributors)
+[![Contributors](https://contrib.rocks/image?repo=eggjs/bin)](https://github.com/eggjs/bin/graphs/contributors)
 
 Made with [contributors-img](https://contrib.rocks).
 
 [mocha]: https://mochajs.org
 [glob]: https://github.com/isaacs/node-glob
-[@artus-cli/artus-cli]: https://github.com/artus-cli/artus-cli

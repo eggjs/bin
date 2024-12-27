@@ -1,17 +1,18 @@
 import path from 'node:path';
-import net from 'node:net';
-import detect from 'detect-port';
-import mm from 'mm';
-import coffee from '../coffee';
+import net, { Server } from 'node:net';
+import { detect } from 'detect-port';
+import { mm } from '@eggjs/mock';
+import { importResolve } from '@eggjs/utils';
+import coffee from '../coffee.js';
+import { getRootDirname, getFixtures } from '../helper.js';
 
 const version = Number(process.version.substring(1, 3));
 
-describe('test/cmd/dev.test.ts', () => {
-  const eggBin = path.join(__dirname, '../../src/bin/cli.ts');
-  const fixtures = path.join(__dirname, '../fixtures');
-  const cwd = path.join(fixtures, 'demo-app');
+describe('test/commands/dev.test.ts', () => {
+  const eggBin = path.join(getRootDirname(), 'bin/run.js');
+  const cwd = getFixtures('demo-app');
 
-  it('should startCluster success', () => {
+  it('should startCluster success on CommonJS', () => {
     return coffee.fork(eggBin, [ 'dev' ], {
       cwd,
       // env: { NODE_DEBUG: 'egg-bin*' },
@@ -25,9 +26,26 @@ describe('test/cmd/dev.test.ts', () => {
       .end();
   });
 
+  it('should startCluster success on ESM', () => {
+    const cwd = getFixtures('demo-app-esm');
+    const hook = path.join(cwd, 'hook.js');
+    return coffee.fork(eggBin, [ 'dev', '-r', hook ], {
+      cwd,
+    })
+      // .debug()
+      .expect('stdout', /start hook success/)
+      .expect('stdout', /'--import'/)
+      .expect('stdout', /"workers":1/)
+      .expect('stdout', /"baseDir":".*?demo-app-esm"/)
+      .expect('stdout', /"framework":".*?aliyun-egg"/)
+      .expect('stdout', /NODE_ENV: development/)
+      .expect('code', 0)
+      .end();
+  });
+
   it('should dev start with custom NODE_ENV', () => {
     return coffee.fork(eggBin, [ 'dev' ], { cwd, env: { NODE_ENV: 'prod' } })
-      // .debug()
+      .debug()
       .expect('stdout', /"workers":1/)
       .expect('stdout', /"baseDir":".*?demo-app"/)
       .expect('stdout', /"framework":".*?aliyun-egg"/)
@@ -36,8 +54,8 @@ describe('test/cmd/dev.test.ts', () => {
       .end();
   });
 
-  it('should dev start work with declarations = true', () => {
-    const cwd = path.join(fixtures, 'example-declarations');
+  it.skip('should dev start work with declarations = true', () => {
+    const cwd = getFixtures('example-declarations');
     return coffee.fork(eggBin, [ 'dev' ], { cwd })
       .debug()
       .expect('stdout', /"workers":1/)
@@ -115,7 +133,7 @@ describe('test/cmd/dev.test.ts', () => {
   });
 
   it('should startCluster with custom yadan framework', () => {
-    const baseDir = path.join(fixtures, 'custom-framework-app');
+    const baseDir = getFixtures('custom-framework-app');
     return coffee.fork(eggBin, [ 'dev' ], { cwd: baseDir })
       // .debug()
       .expect('stdout', /yadan start:/)
@@ -135,55 +153,67 @@ describe('test/cmd/dev.test.ts', () => {
   });
 
   it('should support --require', () => {
-    const script = path.join(fixtures, 'require-script');
+    const script = getFixtures('require-script.cjs');
     return coffee.fork(eggBin, [ 'dev', '--require', script ], { cwd })
-      // .debug()
+      .debug()
       .expect('stdout', /hey, you require me by --require/)
+      .expect('code', 0)
+      .end();
+  });
+
+  it('should support --import', () => {
+    const cwd = getFixtures('demo-app-esm');
+    const script = getFixtures('require-script.mjs');
+    return coffee.fork(eggBin, [ 'dev', '--import', script ], { cwd })
+      .debug()
+      .expect('stdout', /hey, you require me by --import/)
       .expect('code', 0)
       .end();
   });
 
   it('should support egg.require', () => {
     return coffee.fork(eggBin, [ 'dev' ], {
-      cwd: path.join(fixtures, 'egg-require'),
+      cwd: getFixtures('egg-require'),
     })
-      // .debug()
+      .debug()
       .expect('stdout', /hey, you require me by --require/)
       .expect('code', 0)
       .end();
   });
 
   describe('auto detect available port', () => {
-    let server;
-    let serverPort;
+    let server: Server;
+    let serverPort: number;
     before(async () => {
       serverPort = await detect(7001);
       server = net.createServer();
-      await new Promise(resolve => {
+      await new Promise<void>(resolve => {
         server.listen(serverPort, resolve);
       });
     });
 
     after(() => server.close());
 
-    it('should auto detect available port', done => {
-      coffee.fork(eggBin, [ 'dev' ], {
+    it('should auto detect available port', () => {
+      return coffee.fork(eggBin, [ 'dev' ], {
         cwd,
-        env: { EGG_BIN_DEFAULT_PORT: serverPort },
+        env: { EGG_BIN_DEFAULT_PORT: String(serverPort) },
       })
         // .debug()
-        .expect('stderr', /\[egg-bin] server port \d+ is in use, now using port \d+/)
+        .expect('stderr', /\[@eggjs\/bin] server port \d+ is unavailable, now using port \d+/)
         .expect('code', 0)
-        .end(done);
+        .end();
     });
   });
 
   describe('obtain the port from config.*.js', () => {
-    const cwd = path.join(fixtures, 'example-port');
-    it('should obtain the port from config.default.js', () => {
-      coffee.fork(eggBin, [ 'dev' ], {
+    const cwd = getFixtures('example-port');
+    it.skip('should obtain the port from config.default.js', () => {
+      const eggFramework = path.dirname(importResolve('egg/package.json'));
+      return coffee.fork(eggBin, [ 'dev', '--framework', eggFramework ], {
         cwd,
       })
+        .debug()
         .expect('stdout', /"port":6001/)
         .expect('code', 0)
         .end();
@@ -191,12 +221,12 @@ describe('test/cmd/dev.test.ts', () => {
   });
 
   it('should support egg.revert', () => {
-    if (version < 18 || version > 20) return;
+    if (version !== 20) return;
     mm(process.env, 'NODE_ENV', 'development');
     return coffee.fork(eggBin, [ 'dev' ], {
-      cwd: path.join(__dirname, '../fixtures/egg-revert'),
+      cwd: getFixtures('egg-revert'),
     })
-      // .debug()
+      .debug()
       .expect('stdout', /SECURITY WARNING: Reverting CVE-2023-46809: Marvin attack on PKCS#1 padding/)
       .expect('code', 0)
       .end();

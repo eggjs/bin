@@ -1,10 +1,10 @@
 import path from 'node:path';
-import coffee from './coffee';
+import coffee from './coffee.js';
+import { getRootDirname, getFixtures } from './helper.js';
 
 describe('test/egg-bin.test.ts', () => {
-  const eggBin = path.join(__dirname, '../src/bin/cli.ts');
-  const fixtures = path.join(__dirname, 'fixtures');
-  const cwd = path.join(fixtures, 'test-files');
+  const eggBin = path.join(getRootDirname(), 'bin/run.js');
+  const cwd = getFixtures('test-files');
 
   describe('global options', () => {
     it('should show version', () => {
@@ -18,10 +18,8 @@ describe('test/egg-bin.test.ts', () => {
     it('should main redirect to help', () => {
       return coffee.fork(eggBin, [], { cwd })
         // .debug()
-        .expect('stdout', /Usage: egg-bin/)
-        .expect('stdout', /Available Commands/)
-        .expect('stdout', /test \[files\.\.\.]\s+Run the test/)
-        .expect('stdout', /-ts, --typescript\s+whether enable typescript support/)
+        .expect('stdout', /USAGE/)
+        .expect('stdout', /\$ egg-bin \[COMMAND]/)
         .expect('code', 0)
         .end();
     });
@@ -29,10 +27,8 @@ describe('test/egg-bin.test.ts', () => {
     it('should show help', () => {
       return coffee.fork(eggBin, [ '--help' ], { cwd })
         // .debug()
-        .expect('stdout', /Usage: egg-bin/)
-        .expect('stdout', /Available Commands/)
-        .expect('stdout', /test \[files\.\.\.]\s+Run the test/)
-        .expect('stdout', /-ts, --typescript\s+whether enable typescript support/)
+        .expect('stdout', /USAGE/)
+        .expect('stdout', /\$ egg-bin \[COMMAND]/)
         .expect('code', 0)
         .end();
     });
@@ -40,8 +36,8 @@ describe('test/egg-bin.test.ts', () => {
     it('should show egg-bin test help', () => {
       return coffee.fork(eggBin, [ 'test', '-h', '--base', cwd ])
         // .debug()
-        .expect('stdout', /Usage: egg-bin test \[files\.\.\.]/)
-        .expect('stdout', /-ts, --typescript\s+whether enable typescript support/)
+        .expect('stdout', /Run the test/)
+        .expect('stdout', /--\[no-]typescript {5}\[default: true] use TypeScript to run the test/)
         .expect('code', 0)
         .end();
     });
@@ -49,8 +45,8 @@ describe('test/egg-bin.test.ts', () => {
     it('should show help when command not exists', () => {
       return coffee.fork(eggBin, [ 'not-exists' ], { cwd })
         // .debug()
-        .expect('stderr', /Command is not found: 'egg-bin not-exists', try 'egg-bin --help' for more information/)
-        .expect('code', 1)
+        .expect('stderr', /command not-exists not found/)
+        .expect('code', 2)
         .end();
     });
   });
