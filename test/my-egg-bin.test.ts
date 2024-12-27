@@ -59,7 +59,7 @@ describe('test/my-egg-bin.test.ts', () => {
   it('should my-egg-bin dev success', () => {
     const baseDir = getFixtures('custom-framework-app');
     return coffee.fork(eggBin, [ 'dev' ], { cwd: baseDir })
-      // .debug()
+      .debug()
       .expect('stdout', /yadan start/)
       .expect('stdout', /this is my-egg-bin dev/)
       .expect('code', 0)
