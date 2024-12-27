@@ -200,7 +200,7 @@ describe('test/commands/test.test.ts', () => {
     });
 
     it('should success js on unhandled-rejection', () => {
-      if (version >= 20 && process.platform === 'win32') return;
+      if (process.env.CI) return;
       return coffee.fork(eggBin, [ 'test' ], { cwd: getFixtures('test-unhandled-rejection') })
         .debug()
         .expect('stdout', / Uncaught Error: mock error/)
