@@ -1,9 +1,7 @@
-'use strict';
-
 exports.key = '12345';
 
 exports.cluster = {
-    listen: {
-        port: 6001,
-    },
+  listen: {
+    port: 6001,
+  },
 };

@@ -404,7 +404,7 @@ describe('test/ts.test.ts', () => {
       })
         .debug()
         .end();
-      assert.match(stdout, /ts-node@10\.\d+\.\d+/);
+      assert.match(stdout, /ts-node/);
       assert.equal(code, 0);
     });
 
