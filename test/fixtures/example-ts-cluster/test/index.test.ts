@@ -6,7 +6,7 @@ describe('test/index.test.ts', () => {
   before(() => {
     app = mm.cluster({
       opt: {
-        execArgv: [ '--require', importResolve('ts-node/register') ],
+        execArgv: [ '--require', 'ts-node/register' ],
       },
     } as MockOption);
     // app.debug();

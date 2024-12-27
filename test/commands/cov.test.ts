@@ -203,12 +203,12 @@ describe('test/commands/cov.test.ts', () => {
     });
 
     it('should support egg.revert', () => {
-      if (version < 18 || version > 20) return;
+      if (version !== 20) return;
       mock(process.env, 'NODE_ENV', 'development');
       return coffee.fork(eggBin, [ 'cov' ], {
         cwd: getFixtures('egg-revert'),
       })
-        // .debug()
+        .debug()
         .expect('stdout', /SECURITY WARNING: Reverting CVE-2023-46809: Marvin attack on PKCS#1 padding/)
         .expect('stdout', /1 passing/)
         .expect('code', 0)

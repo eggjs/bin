@@ -61,6 +61,7 @@
     "eslint-config-egg": "14",
     "npminstall": "^7.12.0",
     "rimraf": "6",
+    "supertest": "^7.0.0",
     "tshy": "3",
     "tshy-after": "1",
     "typescript": "5"
