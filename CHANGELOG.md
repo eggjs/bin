@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.0.1](https://github.com/eggjs/bin/compare/v7.0.0...v7.0.1) (2024-12-29)
+
+
+### Bug Fixes
+
+* auto set mocha @eggjs/mock/register on application project type ([#281](https://github.com/eggjs/bin/issues/281)) ([929c0f8](https://github.com/eggjs/bin/commit/929c0f8cac43a5798b207dd26d7b9ba26ae9ada1))
+
 ## [7.0.0](https://github.com/eggjs/bin/compare/v6.13.0...v7.0.0) (2024-12-27)
 
 
