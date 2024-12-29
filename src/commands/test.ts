@@ -4,7 +4,7 @@ import os from 'node:os';
 import fs from 'node:fs/promises';
 import { Args, Flags } from '@oclif/core';
 import globby from 'globby';
-import { importResolve } from '@eggjs/utils';
+import { importResolve, detectType, EggType } from '@eggjs/utils';
 import { getChangedFilesForRoots } from 'jest-changed-files';
 import { BaseCommand } from '../baseCommand.js';
 
@@ -115,15 +115,19 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
     const { args, flags } = this;
     // collect require
     const requires = await this.formatRequires();
-    // try {
-    //   const eggMockRegister = importResolve('@eggjs/mock/register', { paths: [ this.base ] });
-    //   requires.push(eggMockRegister);
-    //   debug('auto register @eggjs/mock/register: %o', eggMockRegister);
-    // } catch (err) {
-    //   // ignore @eggjs/mock not exists
-    //   debug('auto register @eggjs/mock fail, can not require @eggjs/mock on %o, error: %s',
-    //     this.base, (err as Error).message);
-    // }
+    const eggType = await detectType(flags.base);
+    debug('eggType: %s', eggType);
+    if (eggType === EggType.application) {
+      try {
+        const eggMockRegister = importResolve('@eggjs/mock/register', { paths: [ flags.base ] });
+        requires.push(eggMockRegister);
+        debug('auto register @eggjs/mock/register: %o', eggMockRegister);
+      } catch (err: any) {
+        // ignore @eggjs/mock not exists
+        debug('auto register @eggjs/mock fail, can not require @eggjs/mock on %o, error: %s',
+          flags.base, err.message);
+      }
+    }
 
     // handle mochawesome enable
     let reporter = this.env.TEST_REPORTER;

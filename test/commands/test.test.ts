@@ -20,6 +20,30 @@ describe('test/commands/test.test.ts', () => {
         .end();
     });
 
+    it('should work on auto require @eggjs/mock/register on CommonJS', () => {
+      if (process.platform === 'win32') return;
+      return coffee.fork(eggBin, [ 'test' ], {
+        cwd: getFixtures('test-demo-app'),
+      })
+        .debug()
+        .expect('stdout', /should work/)
+        .expect('stdout', /a\.test\.js/)
+        .expect('code', 0)
+        .end();
+    });
+
+    it('should work on auto require @eggjs/mock/register on ESM', () => {
+      if (process.platform === 'win32') return;
+      return coffee.fork(eggBin, [ 'test' ], {
+        cwd: getFixtures('test-demo-app-esm'),
+      })
+        .debug()
+        .expect('stdout', /should work/)
+        .expect('stdout', /a\.test\.js/)
+        .expect('code', 0)
+        .end();
+    });
+
     it('should success when no changed files', () => {
       return coffee.fork(eggBin, [ 'test', '-c' ], { cwd })
         // .debug()

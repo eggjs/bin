@@ -18,7 +18,7 @@
     "node": ">= 18.19.0"
   },
   "dependencies": {
-    "@eggjs/utils": "^4.1.2",
+    "@eggjs/utils": "^4.2.0",
     "@oclif/core": "^4.2.0",
     "@types/mocha": "^10.0.10",
     "@types/supertest": "^6.0.2",
@@ -35,7 +35,7 @@
     "utility": "^2.4.0"
   },
   "peerDependencies": {
-    "@eggjs/mock": "beta"
+    "@eggjs/mock": "6"
   },
   "peerDependenciesMeta": {
     "@eggjs/mock": {
@@ -44,7 +44,7 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.1",
-    "@eggjs/mock": "beta",
+    "@eggjs/mock": "6",
     "@eggjs/tsconfig": "1",
     "@swc-node/register": "^1.6.1",
     "@swc/core": "^1.3.35",
