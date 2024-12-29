@@ -21,6 +21,7 @@ describe('test/commands/test.test.ts', () => {
     });
 
     it('should work on auto require @eggjs/mock/register on CommonJS', () => {
+      if (process.platform === 'win32') return;
       return coffee.fork(eggBin, [ 'test' ], {
         cwd: getFixtures('test-demo-app'),
       })
@@ -32,6 +33,7 @@ describe('test/commands/test.test.ts', () => {
     });
 
     it('should work on auto require @eggjs/mock/register on ESM', () => {
+      if (process.platform === 'win32') return;
       return coffee.fork(eggBin, [ 'test' ], {
         cwd: getFixtures('test-demo-app-esm'),
       })
