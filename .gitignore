@@ -18,6 +18,7 @@ test/fixtures/ts/node_modules/aliyun-egg/
 !test/fixtures/example-ts-simple/node_modules/
 !test/fixtures/test-files/node_modules/
 !test/fixtures/test-demo-app/node_modules/
+!test/fixtures/test-demo-app-esm/node_modules/
 
 .mochawesome-reports
 run

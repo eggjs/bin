@@ -1,4 +1,4 @@
-const { app } = require('@eggjs/mock/bootstrap');
+import { app } from '@eggjs/mock/bootstrap';
 
 describe('a.test.js', () => {
   it('should work', async () => {
