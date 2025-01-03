@@ -201,15 +201,15 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
       }
     }
     flags.typescript = typescript;
-
+    let rootDir = path.dirname(getSourceDirname());
+    if (path.basename(rootDir) === 'dist') {
+      rootDir = path.dirname(rootDir);
+    }
+    // try app baseDir first on custom tscompiler
+    // then try to find tscompiler in @eggjs/bin/node_modules
+    const findPaths: string[] = [ flags.base, rootDir ];
     this.isESM = pkg.type === 'module';
     if (typescript) {
-      const findPaths: string[] = [ getSourceDirname() ];
-      if (flags.tscompiler) {
-        // try app baseDir first on custom tscompiler
-        // then try to find tscompiler in @eggjs/bin/node_modules
-        findPaths.unshift(flags.base);
-      }
       flags.tscompiler = flags.tscompiler ?? 'ts-node/register';
       const tsNodeRegister = importResolve(flags.tscompiler, {
         paths: findPaths,
@@ -229,15 +229,15 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
       this.env.TS_NODE_FILES = process.env.TS_NODE_FILES ?? 'true';
       // keep same logic with egg-core, test cmd load files need it
       // see https://github.com/eggjs/egg-core/blob/master/lib/loader/egg_loader.js#L49
-      const tsConfigPathsRegister = importResolve('tsconfig-paths/register.js', {
-        paths: [ getSourceDirname() ],
+      const tsConfigPathsRegister = importResolve('tsconfig-paths/register', {
+        paths: findPaths,
       });
       this.addNodeOptions(this.formatImportModule(tsConfigPathsRegister));
     }
     if (this.isESM) {
       // use ts-node/esm loader on esm
       let esmLoader = importResolve('ts-node/esm', {
-        paths: [ getSourceDirname() ],
+        paths: findPaths,
       });
       // ES Module loading with absolute path fails on windows
       // https://github.com/nodejs/node/issues/31710#issuecomment-583916239
@@ -258,10 +258,7 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
     }
     if (flags.declarations) {
       const etsBin = importResolve('egg-ts-helper/dist/bin', {
-        paths: [
-          flags.base,
-          getSourceDirname(),
-        ],
+        paths: findPaths,
       });
       debug('run ets first: %o', etsBin);
       await runScript(`node ${etsBin}`);
