@@ -56,7 +56,7 @@ describe('test/commands/cov.test.ts', () => {
       await coffee.fork(eggBin, [ 'cov' ], { cwd })
         // .debug()
         .expect('stdout', /should work/)
-        .expect('stdout', /1 passing/)
+        .expect('stdout', /3 passing/)
         .expect('stdout', /Statements\s+: 100% \( \d+\/\d+ \)/)
         .expect('code', 0)
         .end();
