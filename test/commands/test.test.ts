@@ -63,9 +63,9 @@ describe('test/commands/test.test.ts', () => {
     it('should success on ts', async () => {
       const cwd = getFixtures('example-ts');
       await coffee.fork(eggBin, [ 'test' ], { cwd })
-        // .debug()
+        .debug()
         .expect('stdout', /should work/)
-        .expect('stdout', /1 passing/)
+        .expect('stdout', /3 passing \(/)
         .expect('code', 0)
         .end();
     });

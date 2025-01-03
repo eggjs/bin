@@ -229,9 +229,10 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
       this.env.TS_NODE_FILES = process.env.TS_NODE_FILES ?? 'true';
       // keep same logic with egg-core, test cmd load files need it
       // see https://github.com/eggjs/egg-core/blob/master/lib/loader/egg_loader.js#L49
-      // addNodeOptionsToEnv(`--require ${importResolve('tsconfig-paths/register', {
-      //   paths: [ getSourceDirname() ],
-      // })}`, ctx.env);
+      const tsConfigPathsRegister = importResolve('tsconfig-paths/register.js', {
+        paths: [ getSourceDirname() ],
+      });
+      this.addNodeOptions(this.formatImportModule(tsConfigPathsRegister));
     }
     if (this.isESM) {
       // use ts-node/esm loader on esm
