@@ -13,6 +13,7 @@ export default class Cov<T extends typeof Cov> extends Test<T> {
   static override examples = [
     '<%= config.bin %> <%= command.id %>',
     '<%= config.bin %> <%= command.id %> test/index.test.ts',
+    '<%= config.bin %> <%= command.id %> test/index.test.ts,test/user.test.ts,...',
   ];
 
   static override flags = {

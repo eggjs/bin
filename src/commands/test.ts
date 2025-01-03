@@ -22,6 +22,7 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
   static override examples = [
     '<%= config.bin %> <%= command.id %>',
     '<%= config.bin %> <%= command.id %> test/index.test.ts',
+    '<%= config.bin %> <%= command.id %> test/index.test.ts,test/user.test.ts,...',
     '<%= config.bin %> <%= command.id %> --json',
     '<%= config.bin %> <%= command.id %> --log-level debug',
   ];
