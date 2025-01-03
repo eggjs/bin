@@ -4,6 +4,6 @@
     "typescript": true
   },
   "devDependencies": {
-    "@eggjs/mock": "beta"
+    "@eggjs/mock": "6"
   }
 }
