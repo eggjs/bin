@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.0.2](https://github.com/eggjs/bin/compare/v7.0.1...v7.0.2) (2025-01-03)
+
+
+### Bug Fixes
+
+* auto import tsconfig-paths/register.js ([#282](https://github.com/eggjs/bin/issues/282)) ([515614a](https://github.com/eggjs/bin/commit/515614a2338381c5a5878c2af794a9b1964a2e90))
+
 ## [7.0.1](https://github.com/eggjs/bin/compare/v7.0.0...v7.0.1) (2024-12-29)
 
 
