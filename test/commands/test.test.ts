@@ -11,11 +11,28 @@ describe('test/commands/test.test.ts', () => {
   describe('egg-bin test', () => {
     it('should success js', () => {
       return coffee.fork(eggBin, [ 'test' ], { cwd })
-        .debug()
+        // .debug()
         .expect('stdout', /should success/)
         .expect('stdout', /a\.test\.js/)
         .expect('stdout', /b\/b\.test\.js/)
         .notExpect('stdout', /\ba\.js/)
+        .expect('code', 0)
+        .end();
+    });
+
+    it('should success with some files', async () => {
+      await coffee.fork(eggBin, [ 'test', 'test/a.test.js' ], { cwd })
+        // .debug()
+        .expect('stdout', /should success/)
+        .expect('stdout', /a\.test\.js/)
+        .expect('stdout', /2 passing \(/)
+        .expect('code', 0)
+        .end();
+      await coffee.fork(eggBin, [ 'test', 'test/a.test.js,test/ignore.test.js' ], { cwd })
+        // .debug()
+        .expect('stdout', /should success/)
+        .expect('stdout', /a\.test\.js/)
+        .expect('stdout', /ignore\.test\.js/)
         .expect('code', 0)
         .end();
     });
@@ -25,7 +42,7 @@ describe('test/commands/test.test.ts', () => {
       return coffee.fork(eggBin, [ 'test' ], {
         cwd: getFixtures('test-demo-app'),
       })
-        .debug()
+        // .debug()
         .expect('stdout', /should work/)
         .expect('stdout', /a\.test\.js/)
         .expect('code', 0)
@@ -37,7 +54,7 @@ describe('test/commands/test.test.ts', () => {
       return coffee.fork(eggBin, [ 'test' ], {
         cwd: getFixtures('test-demo-app-esm'),
       })
-        .debug()
+        // .debug()
         .expect('stdout', /should work/)
         .expect('stdout', /a\.test\.js/)
         .expect('code', 0)
