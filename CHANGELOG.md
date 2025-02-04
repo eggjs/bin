@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.0.4](https://github.com/eggjs/bin/compare/v7.0.3...v7.0.4) (2025-02-04)
+
+
+### Bug Fixes
+
+* postinstall from root dir ([9033e50](https://github.com/eggjs/bin/commit/9033e504f49f87faf686c14becf916bc665f285d))
+
 ## [7.0.3](https://github.com/eggjs/bin/compare/v7.0.2...v7.0.3) (2025-02-04)
 
 
