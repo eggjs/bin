@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.1.0](https://github.com/eggjs/bin/compare/v7.0.4...v7.1.0) (2025-02-04)
+
+
+### Features
+
+* use egg-ts-helper@3 ([ebfc9c4](https://github.com/eggjs/bin/commit/ebfc9c44fed52c6a4e750f31332abb0abd1f1bb2))
+
 ## [7.0.4](https://github.com/eggjs/bin/compare/v7.0.3...v7.0.4) (2025-02-04)
 
 
