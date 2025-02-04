@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.0.3](https://github.com/eggjs/bin/compare/v7.0.2...v7.0.3) (2025-02-04)
+
+
+### Bug Fixes
+
+* enable postinstall ([#285](https://github.com/eggjs/bin/issues/285)) ([4406d92](https://github.com/eggjs/bin/commit/4406d927fab1be56891f23f86a85f0061bc313fd))
+
 ## [7.0.2](https://github.com/eggjs/bin/compare/v7.0.1...v7.0.2) (2025-01-03)
 
 
