@@ -9,11 +9,12 @@ const debug = debuglog('@eggjs/bin/scripts/postinstall');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const rootDir = path.dirname(__dirname);
 
 async function main() {
   // node postintall.js </path/to/egg-ts-helper/dist/bin> <framework-package-name>
   const etsBinFile = process.argv[2] || importResolve('egg-ts-helper/dist/bin.js', {
-    paths: [ __dirname ],
+    paths: [ rootDir ],
   });
   const frameworkPackageName = process.argv[3] || 'egg';
 
