@@ -54,7 +54,7 @@
     "cpy": "^8.1.2",
     "cpy-cli": "^5.0.0",
     "cross-env": "^7.0.3",
-    "egg": "beta",
+    "egg": "^4.0.7",
     "esbuild": "^0.17.7",
     "esbuild-register": "^3.4.2",
     "eslint": "8",
@@ -67,7 +67,7 @@
     "typescript": "5"
   },
   "scripts": {
-    "postinstall-skip": "node scripts/postinstall.mjs",
+    "postinstall": "node scripts/postinstall.mjs",
     "lint": "eslint --cache src test --ext .ts",
     "pretest": "npm run clean && npm run lint -- --fix && npm run prepublishOnly",
     "test": "node bin/run.js test",

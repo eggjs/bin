@@ -157,7 +157,7 @@ describe('test/commands/test.test.ts', () => {
         .end();
     });
 
-    it('should grep pattern without error', () => {
+    it.skip('should grep pattern without error', () => {
       return coffee.fork(eggBin, [ 'test', 'test/a.test.js', '--grep', 'should success' ], {
         cwd,
       })

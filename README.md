@@ -1,4 +1,4 @@
-# egg-bin
+# @eggjs/bin
 
 [![NPM version][npm-image]][npm-url]
 [![build status][ci-image]][ci-url]
