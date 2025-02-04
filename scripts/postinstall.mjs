@@ -12,7 +12,7 @@ const __dirname = path.dirname(__filename);
 
 async function main() {
   // node postintall.js </path/to/egg-ts-helper/dist/bin> <framework-package-name>
-  const etsBinFile = process.argv[2] || importResolve('egg-ts-helper/dist/bin', {
+  const etsBinFile = process.argv[2] || importResolve('egg-ts-helper/dist/bin.js', {
     paths: [ __dirname ],
   });
   const frameworkPackageName = process.argv[3] || 'egg';

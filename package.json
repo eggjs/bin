@@ -67,7 +67,7 @@
     "typescript": "5"
   },
   "scripts": {
-    "postinstall-skip": "node scripts/postinstall.mjs",
+    "postinstall": "node scripts/postinstall.mjs",
     "lint": "eslint --cache src test --ext .ts",
     "pretest": "npm run clean && npm run lint -- --fix && npm run prepublishOnly",
     "test": "node bin/run.js test",
