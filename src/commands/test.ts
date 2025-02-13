@@ -6,6 +6,8 @@ import { Args, Flags } from '@oclif/core';
 import globby from 'globby';
 import { importResolve, detectType, EggType } from '@eggjs/utils';
 import { getChangedFilesForRoots } from 'jest-changed-files';
+// @ts-expect-error no types
+import ciParallelVars from 'ci-parallel-vars';
 import { BaseCommand } from '../baseCommand.js';
 
 const debug = debuglog('@eggjs/bin/commands/test');
@@ -166,12 +168,25 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
     pattern = pattern.concat([ '!test/fixtures', '!test/node_modules' ]);
 
     // expand glob and skip node_modules and fixtures
-    const files = globby.sync(pattern, { cwd: flags.base });
+    let files = globby.sync(pattern, { cwd: flags.base });
     files.sort();
 
     if (files.length === 0) {
       console.log('No test files found with pattern %o', pattern);
       return;
+    }
+
+    // split up test files in parallel CI jobs
+    if (ciParallelVars) {
+      const { index: currentIndex, total: totalRuns } = ciParallelVars as { index: number, total: number };
+      const fileCount = files.length;
+      const each = Math.floor(fileCount / totalRuns);
+      const remainder = fileCount % totalRuns;
+      const offset = Math.min(currentIndex, remainder) + (currentIndex * each);
+      const currentFileCount = each + (currentIndex < remainder ? 1 : 0);
+      files = files.slice(offset, offset + currentFileCount);
+      console.log('# Split test files in parallel CI jobs: %d/%d, files: %d/%d',
+        currentIndex + 1, totalRuns, files.length, fileCount);
     }
 
     // auto add setup file as the first test file

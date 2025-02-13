@@ -20,6 +20,24 @@ describe('test/commands/test.test.ts', () => {
         .end();
     });
 
+    it('should work on split test files in parallel CI jobs', () => {
+      return coffee.fork(eggBin, [ 'test' ], {
+        cwd,
+        env: {
+          CI_NODE_INDEX: '2',
+          CI_NODE_TOTAL: '3',
+        },
+      })
+        // .debug()
+        .expect('stdout', /# Split test files in parallel CI jobs: 3\/3, files: 1\/4/)
+        .expect('stdout', /should success/)
+        .expect('stdout', /no-timeouts\.test\.js/)
+        .notExpect('stdout', /a\.test\.js/)
+        .expect('stdout', /1 passing \(/)
+        .expect('code', 0)
+        .end();
+    });
+
     it('should success with some files', async () => {
       await coffee.fork(eggBin, [ 'test', 'test/a.test.js' ], { cwd })
         // .debug()
