@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.2.0](https://github.com/eggjs/bin/compare/v7.1.0...v7.2.0) (2025-02-13)
+
+
+### Features
+
+* support parallel tests ([#287](https://github.com/eggjs/bin/issues/287)) ([b3f2b6c](https://github.com/eggjs/bin/commit/b3f2b6cb531a6bef17ae12d4fcf1a2bfd9316263))
+
 ## [7.1.0](https://github.com/eggjs/bin/compare/v7.0.4...v7.1.0) (2025-02-04)
 
 
