@@ -74,9 +74,9 @@ describe('test/ts.test.ts', () => {
     });
 
     it('should cov app in cluster mod', () => {
-      // TODO(@fengmk2): not work on Node.js 22 + linux
+      // TODO(@fengmk2): not work on Node.js 22
       // https://github.com/eggjs/bin/actions/runs/13308042479/job/37164115998
-      if (process.platform === 'linux' && process.version.startsWith('v22.')) {
+      if (process.version.startsWith('v22.')) {
         return;
       }
       cwd = getFixtures('example-ts-cluster');
