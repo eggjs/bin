@@ -23,6 +23,7 @@
     "@types/mocha": "^10.0.10",
     "@types/supertest": "^6.0.2",
     "c8": "^10.0.0",
+    "ci-parallel-vars": "^1.0.1",
     "detect-port": "^2.0.0",
     "egg-ts-helper": "^3.0.0",
     "globby": "^11.1.0",
