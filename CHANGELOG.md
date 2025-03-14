@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.3.0](https://github.com/eggjs/bin/compare/v7.2.0...v7.3.0) (2025-03-14)
+
+
+### Features
+
+* use mochawesome-with-mocha@8 ([#288](https://github.com/eggjs/bin/issues/288)) ([2e2e3cf](https://github.com/eggjs/bin/commit/2e2e3cf8f46833b76ff8619c96ccbd7fb56cd470))
+
 ## [7.2.0](https://github.com/eggjs/bin/compare/v7.1.0...v7.2.0) (2025-02-13)
 
 
