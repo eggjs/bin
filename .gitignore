@@ -26,6 +26,7 @@ run
 .cache
 *.log
 package-lock.json
+pnpm-lock.yaml
 .nyc_output
 yarn.lock
 .c8_output
