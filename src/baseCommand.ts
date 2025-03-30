@@ -1,6 +1,7 @@
 import { debuglog } from 'node:util';
 import { pathToFileURL } from 'node:url';
 import path from 'node:path';
+import os from 'node:os';
 import { fork, ForkOptions, ChildProcess } from 'node:child_process';
 import { Command, Flags, Interfaces } from '@oclif/core';
 import { importResolve } from '@eggjs/utils';
@@ -261,7 +262,7 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
         paths: findPaths,
       });
       debug('run ets first: %o', etsBin);
-      await runScript(`node ${etsBin}`);
+      await runScript(`node "${etsBin}"`);
     }
 
     if (this.pkgEgg.revert) {
@@ -327,9 +328,12 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
 
   protected formatImportModule(modulePath: string) {
     if (this.isESM) {
-      return `--import ${pathToFileURL(modulePath).href}`;
+      return `--import "${pathToFileURL(modulePath).href}"`;
     }
-    return `--require ${modulePath}`;
+    if (os.platform() === 'win32') {
+      return `--require "${path.win32.normalize(modulePath).replace(/\\/g, '\\\\')}"`;
+    }
+    return `--require "${modulePath}"`;
   }
 
   protected addNodeOptions(options: string) {

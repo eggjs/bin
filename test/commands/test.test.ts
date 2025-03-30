@@ -394,4 +394,16 @@ describe('test/commands/test.test.ts', () => {
         .end();
     });
   });
+
+  describe('work on special path', () => {
+    it('should work with space in path', () => {
+      return coffee.fork(eggBin, [ 'test' ], {
+        cwd: getFixtures('test path with space/test-files'),
+      })
+        // .debug()
+        .expect('stdout', /should success/)
+        .expect('code', 0)
+        .end();
+    });
+  });
 });
