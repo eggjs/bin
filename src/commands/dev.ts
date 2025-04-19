@@ -45,11 +45,12 @@ export default class Dev<T extends typeof Dev> extends BaseCommand<T> {
     const execArgv: string[] = [];
     for (const r of requires) {
       const module = this.formatImportModule(r);
+
+      // Remove the quotes from the path
+      // --require "module path" -> ['--require', 'module path']
+      // --import "module path" -> ['--import', 'module path']
       const splitIndex = module.indexOf(' ');
       if (splitIndex !== -1) {
-        // Remove the quotes from the path
-        // --require "module path" -> ['--require', 'module path']
-        // --import "module path" -> ['--import', 'module path']
         execArgv.push(module.slice(0, splitIndex), module.slice(splitIndex + 2, -1));
       }
     }

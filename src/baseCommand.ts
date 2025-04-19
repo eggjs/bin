@@ -331,6 +331,7 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
       return `--import "${pathToFileURL(modulePath).href}"`;
     }
     if (os.platform() === 'win32') {
+      // windows path need to escape backslash: `node --require "C:\\path\\to\\module"`
       return `--require "${path.win32.normalize(modulePath).replace(/\\/g, '\\\\')}"`;
     }
     return `--require "${modulePath}"`;
