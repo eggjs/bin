@@ -147,7 +147,15 @@ describe('test/commands/cov.test.ts', () => {
         // .debug()
         .expect('stdout', /1\) should fail/)
         .expect('stdout', /1 failing/)
-        .expect('stderr', /exit with code 1/)
+        // The formatted coverage report will automatically wrap when output.
+        // There is a certain probability that it will be truncated.
+        // For example:
+        // ==== Coverage Summary ====
+        // Error: xxxxxxxxx.js exit
+        // with code 1
+        // Code: 1
+
+        // .expect('stderr', /exit with code 1/)
         .expect('code', 1)
         .end();
     });

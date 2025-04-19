@@ -20,6 +20,9 @@ test/fixtures/ts/node_modules/aliyun-egg/
 !test/fixtures/test-demo-app/node_modules/
 !test/fixtures/test-demo-app-esm/node_modules/
 
+!test/fixtures/test-postinstall/node_modules/
+!test/fixtures/test path with space/**/node_modules/
+
 .mochawesome-reports
 run
 .tmp
@@ -36,6 +39,7 @@ yarn.lock
 dist
 test/fixtures/example-declarations/typings/
 !test/fixtures/example-declarations/node_modules
+!test/fixtures/test path with space/example-declarations/node_modules/egg-ts-helper/dist/
 .package-lock.json
 .tshy*
 .eslintcache

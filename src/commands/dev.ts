@@ -44,8 +44,15 @@ export default class Dev<T extends typeof Dev> extends BaseCommand<T> {
     const requires = await this.formatRequires();
     const execArgv: string[] = [];
     for (const r of requires) {
-      const imports = this.formatImportModule(r).split(' ');
-      execArgv.push(...imports);
+      const module = this.formatImportModule(r);
+
+      // Remove the quotes from the path
+      // --require "module path" -> ['--require', 'module path']
+      // --import "module path" -> ['--import', 'module path']
+      const splitIndex = module.indexOf(' ');
+      if (splitIndex !== -1) {
+        execArgv.push(module.slice(0, splitIndex), module.slice(splitIndex + 2, -1));
+      }
     }
     await this.forkNode(serverBin, args, { execArgv });
   }

@@ -231,4 +231,58 @@ describe('test/commands/dev.test.ts', () => {
       .expect('code', 0)
       .end();
   });
+
+  describe('work on special path', () => {
+    it('should work with space in path', () => {
+      return coffee.fork(eggBin, [ 'dev' ], {
+        cwd: getFixtures('test path with space/example-app'),
+      })
+        // .debug()
+        .expect('stdout', /Hello, world!/)
+        .expect('code', 0)
+        .end();
+    });
+
+    it('should support declarations with space in path', () => {
+      return coffee.fork(eggBin, [ 'dev' ], {
+        cwd: getFixtures('test path with space/example-declarations'),
+      })
+        // .debug()
+        .expect('stdout', /Hi, I am Egg TS helper!/)
+        .expect('code', 0)
+        .end();
+    });
+
+    it('should support egg.require with space in path', () => {
+      return coffee.fork(eggBin, [ 'dev' ], {
+        cwd: getFixtures('test path with space/example-egg-require'),
+      })
+        // .debug()
+        .expect('stdout', /hey, you require me by --require/)
+        .expect('code', 0)
+        .end();
+    });
+
+    it('should support --require with space in path', () => {
+      return coffee.fork(eggBin, [ 'dev', '--require', getFixtures('test path with space/require script.cjs') ], {
+        cwd: getFixtures('test path with space/example-require-script'),
+      })
+        // .debug()
+        .expect('stdout', /hey, you require me by --require/)
+        .expect('code', 0)
+        .end();
+    });
+
+    it('should support --import with space in path', () => {
+      return coffee.fork(eggBin, [ 'dev', '--import', getFixtures('test path with space/require script.mjs') ], {
+        cwd: getFixtures('test path with space/example-import-script'),
+      })
+        // .debug()
+        .expect('stdout', /hey, you require me by --import/)
+        .expect('code', 0)
+        .end();
+    });
+
+  });
+
 });
