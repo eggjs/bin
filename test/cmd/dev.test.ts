@@ -1,4 +1,5 @@
 import path from 'node:path';
+import fs from 'node:fs/promises';
 import net from 'node:net';
 import detect from 'detect-port';
 import mm from 'mm';
@@ -46,6 +47,22 @@ describe('test/cmd/dev.test.ts', () => {
       .expect('stdout', /\[egg-ts-helper\] create typings/)
       .expect('code', 0)
       .end();
+  });
+
+  it('should create declarations on first use for TypeScript applications', async () => {
+    const cwd = path.join(fixtures, 'typescript-first-use');
+    const typings = path.join(cwd, 'typings');
+    await fs.rm(typings, { force: true, recursive: true });
+    try {
+      await coffee.fork(eggBin, [ 'test' ], { cwd })
+        .expect('stdout', /\[egg-ts-helper\] create typings/)
+        .expect('stdout', /No test files found/)
+        .expect('code', 0)
+        .end();
+      await fs.access(path.join(typings, 'app/controller/index.d.ts'));
+    } finally {
+      await fs.rm(typings, { force: true, recursive: true });
+    }
   });
 
   it('should startCluster with --port', () => {

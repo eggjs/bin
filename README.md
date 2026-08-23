@@ -55,6 +55,8 @@ All the commands support these specific options:
 - `--inspect-brk`
 - `--typescript` / `--ts` enable typescript support. Auto detect from `package.json`'s `pkg.egg.typescript`,
   or `pkg.dependencies.typescript`/`pkg.devDependencies.typescript`.
+- `--declarations` / `--dts` create TypeScript declarations. Applications with `pkg.egg.typescript`
+  or `pkg.egg.declarations` enabled create declarations when `egg-bin` starts.
 - `--base` / `--baseDir` application's root path, default to `process.cwd()`.
 - `--require` will add to `execArgv`, support multiple. Also support read from `package.json`'s `pkg.egg.require`
 - `--dry-run` / `-d` whether dry-run the test command, just show the command
