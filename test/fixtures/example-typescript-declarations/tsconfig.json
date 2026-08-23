@@ -1,0 +1,6 @@
+{
+  "extends": "@eggjs/tsconfig",
+  "compilerOptions": {
+    "noEmit": true
+  }
+}

@@ -128,12 +128,21 @@ export default class GlobalOptions implements ApplicationLifecycle {
           // read `egg.declarations` from package.json if not pass argv
           ctx.args.declarations = ctx.args.pkgEgg.declarations;
           debug('detect declarations from pkg.egg.declarations=%o', ctx.args.pkgEgg.declarations);
+        } else if (
+          ctx.args.pkgEgg.typescript === true &&
+          !pkg.eggModule &&
+          !ctx.args.pkgEgg.isFramework &&
+          pkg.dependencies?.egg
+        ) {
+          // Preserve the old postinstall behavior when the CLI is first used.
+          ctx.args.declarations = true;
+          debug('enable declarations for TypeScript application');
         }
       }
       if (ctx.args.declarations) {
         const etsBin = require.resolve('egg-ts-helper/dist/bin');
         debug('run ets first: %o', etsBin);
-        await runScript(`node ${etsBin}`);
+        await runScript(`node "${etsBin}"`);
       }
 
       if (ctx.args.pkgEgg.revert) {

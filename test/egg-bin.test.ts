@@ -1,3 +1,5 @@
+import assert from 'node:assert';
+import fs from 'node:fs';
 import path from 'node:path';
 import coffee from './coffee';
 
@@ -5,6 +7,13 @@ describe('test/egg-bin.test.ts', () => {
   const eggBin = path.join(__dirname, '../src/bin/cli.ts');
   const fixtures = path.join(__dirname, 'fixtures');
   const cwd = path.join(fixtures, 'test-files');
+
+  it('should not define dependency install scripts', () => {
+    const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, '../package.json'), 'utf8'));
+    for (const name of [ 'preinstall', 'install', 'postinstall' ]) {
+      assert.equal(pkg.scripts[name], undefined);
+    }
+  });
 
   describe('global options', () => {
     it('should show version', () => {

@@ -30,6 +30,10 @@ egg developer tool, extends [@artus-cli/artus-cli].
 npm i egg-bin --save-dev
 ```
 
+`egg-bin` does not use a dependency install script. For applications that set
+`egg.typescript` or `egg.declarations`, the CLI generates typings when an
+`egg-bin` command runs.
+
 ## Usage
 
 Add `egg-bin` to `package.json` scripts:

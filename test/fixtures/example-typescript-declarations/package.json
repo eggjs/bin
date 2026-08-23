@@ -1,0 +1,12 @@
+{
+  "name": "example-typescript-declarations",
+  "version": "1.0.0",
+  "private": true,
+  "egg": {
+    "typescript": true,
+    "framework": "aliyun-egg"
+  },
+  "dependencies": {
+    "egg": "*"
+  }
+}

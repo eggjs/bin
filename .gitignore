@@ -10,6 +10,8 @@ test/fixtures/ts/node_modules/aliyun-egg/
 
 !test/fixtures/test-files-glob/**
 !test/fixtures/example/node_modules/
+!test/fixtures/example-typescript-declarations/node_modules/
+!test/fixtures/example-typescript-declarations/node_modules/**
 !test/fixtures/example-ts-cluster/node_modules/
 !test/fixtures/egg-revert/node_modules/
 !test/fixtures/example-ts-error-stack/node_modules/
@@ -35,5 +37,6 @@ cmd/*.js
 .eslintcache
 dist
 test/fixtures/example-declarations/typings/
+test/fixtures/example-typescript-declarations/typings/
 !test/fixtures/example-declarations/node_modules
 .package-lock.json
